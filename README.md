@@ -359,6 +359,4 @@ from a fresh clone of your repository. Failure to ensure this may result in a lo
 
 ## 8. Late Submission Policy
 
-If your assignment is submitted after this date, each hour it is late reduces the maximum mark it can achieve by 2%.
-
-For example, if an assignment you submitted with a raw awarded mark of 85% was submitted 5 hours late, the late submission would have no effect (as maximum mark would be 90%). If the same assignment was submitted 20 hours late it would be awarded 60%, the maximum mark it can achieve at that time.
+No late submission are accepted.
