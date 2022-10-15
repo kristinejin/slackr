@@ -11,7 +11,7 @@
 
 ## 0. Change Log
 
-N/A
+* 08/10: Clarified that the password field is for setting new passwords only, and does not need to pull a password from the backend.
 
 ## 1. Background & Motivation
 
@@ -132,9 +132,9 @@ Milestone 4 focuses on the interactions that come from having multiple users in 
 
 #### 2.4.3 Viewing and editing user's own profile
  * On all logged in screens, there must be a way for the user to view their own profile screen.
- * On a user's own profile screen, they should also be able to see the field for their password.
- * On a user's own profile screen, they should be able to toggle between viewing their password in plain text and hidden as a string of asterisks/dots of the correct length. It is hidden by default.
- * On a user's own profile screen, they can update their own profile, including name, bio, email, and password.
+ * On a user's own profile screen, they should also be able to see the field that allows them to enter a new password (they cannot see their current).
+ * On a user's own profile screen, they should be able to toggle between viewing the new password they're entering in either plain text or hidden as a string of asterisks/dots of the correct length. It is hidden by default.
+ * On a user's own profile screen, they can update their own profile, including name, bio, email, and password (as described above).
  * On a user's own profile screen, they should be able to upload and change their profile photo.
 
 ### 2.5. Milestone 5 - Photos in channels (7%)
@@ -346,7 +346,7 @@ knowledge.
 
 ## 7. Submission
 
-This assignment is due *Monday 25th of October, 19:59:59*.
+This assignment is due *Monday 24th of October, 10pm*.
 
 To submit your assignment, simply run the following command on a CSE terminal:
 
@@ -359,6 +359,4 @@ from a fresh clone of your repository. Failure to ensure this may result in a lo
 
 ## 8. Late Submission Policy
 
-If your assignment is submitted after this date, each hour it is late reduces the maximum mark it can achieve by 2%.
-
-For example, if an assignment you submitted with a raw awarded mark of 85% was submitted 5 hours late, the late submission would have no effect (as maximum mark would be 90%). If the same assignment was submitted 20 hours late it would be awarded 60%, the maximum mark it can achieve at that time.
+No late submission are accepted.

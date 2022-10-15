@@ -44,7 +44,7 @@ app.use(morgan(':method :url :status'));
 
 const catchErrors = fn => async (req, res) => {
   try {
-    console.log(`Authorization header is ${req.header['Authorization']}`);
+    console.log(`Authorization header is ${req.header('Authorization')}`);
     if (req.method === 'GET') {
       console.log(`Query params are ${JSON.stringify(req.params)}`);
     } else {
