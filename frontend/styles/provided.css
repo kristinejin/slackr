@@ -7,3 +7,18 @@ html, body {
     height: 100%;
     font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
+
+
+.clickable {
+    color:#215af2;
+    text-decoration: underline;
+}
+
+.clickable:hover {
+    cursor: pointer;
+    color: #0000EE;
+}
+
+.hide {
+    display: none;
+}

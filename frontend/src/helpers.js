@@ -29,3 +29,23 @@ export function fileToDataUrl(file) {
     reader.readAsDataURL(file);
     return dataUrlPromise;
 }
+
+
+
+export function isLoggedIn() {
+    let token = localStorage.getItem('token');
+    return (token) ? token : false;
+}
+
+export function setLogout() {
+    localStorage.removeItem('token');
+    document.getElementById('logged-in').style.display = 'none';
+    document.getElementById('logged-out').style.display = 'block';
+}
+
+export const setLogin = (data) => {
+    localStorage.setItem('token', data['token']);
+    localStorage.setItem('userId', data['userId']);
+    document.getElementById('logged-out').style.display = 'none';
+    document.getElementById('logged-in').style.display = 'block';
+}
