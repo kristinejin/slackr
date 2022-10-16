@@ -209,8 +209,8 @@ export const addChannel = (authUserId, name, priv, description) => channelLock((
 
 export const updateChannel = (authUserId, channelId, name, description) => channelLock((resolve, reject) => {
   assertChannelMember(authUserId, channelId);
-  if (name) { channels[channelId].name = name; }
-  if (description) { channels[channelId].description = description; }
+  if (name !== undefined) { channels[channelId].name = name; }
+  if (description !== undefined) { channels[channelId].description = description; }
   resolve();
 });
 
