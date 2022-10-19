@@ -209,8 +209,8 @@ export const addChannel = (authUserId, name, priv, description) => channelLock((
 
 export const updateChannel = (authUserId, channelId, name, description) => channelLock((resolve, reject) => {
   assertChannelMember(authUserId, channelId);
-  if (name) { channels[channelId].name = name; }
-  if (description) { channels[channelId].description = description; }
+  if (name !== undefined) { channels[channelId].name = name; }
+  if (description !== undefined) { channels[channelId].description = description; }
   resolve();
 });
 
@@ -260,10 +260,10 @@ export const getUser = (userId) => userLock((resolve, reject) => {
 });
 
 export const updateProfile = (authUserId, email, password, name, bio, image) => userLock((resolve, reject) => {
-  if (name) { users[authUserId].name = name; }
-  if (password) { users[authUserId].password = password; }
-  if (bio) { users[authUserId].bio = bio; }
-  if (image) { users[authUserId].image = image; }
+  if (name || name === '') { users[authUserId].name = name; }
+  if (password || password === '') { users[authUserId].password = password; }
+  if (bio || bio === '') { users[authUserId].bio = bio; }
+  if (image || image === '') { users[authUserId].image = image; }
   if (email && getUserIdFromEmail(email) !== undefined) {
     return reject(new InputError('Email address already taken'));
   } else if (email) { users[authUserId].email = email; }
