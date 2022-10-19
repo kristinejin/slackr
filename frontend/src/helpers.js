@@ -39,6 +39,7 @@ export function isLoggedIn() {
 
 export function setLogout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     document.getElementById('logged-in').style.display = 'none';
     document.getElementById('logged-out').style.display = 'block';
 }
@@ -48,4 +49,33 @@ export const setLogin = (data) => {
     localStorage.setItem('userId', data['userId']);
     document.getElementById('logged-out').style.display = 'none';
     document.getElementById('logged-in').style.display = 'block';
+}
+
+
+export const cloneDiv = (htmlid, id) => {
+    const newDiv = document.getElementById(htmlid).cloneNode(true);
+    newDiv.setAttribute('id', id);
+    newDiv.classList.remove('hide');
+    return newDiv;
+}
+
+
+// parse ios date string to a user friendly format 
+export const parseDate = (iso) => {
+    const date = new Date(iso);
+    const now = Date.now();
+    const elapsed = now - date; // elapsed time in milliseconds
+    const elapsedInMins = elapsed/60000;
+    const elapsedInHour = elapsed/60000;
+    if (elapsedInMins < 60) {
+        return `${elapsedInMins | 0} mins ago`;
+    }
+    else if (elapsedInHour < 24) {
+        if (elapsedInHour | 0 === 1) {
+            return `${elapsedInHour | 0} hour ago`;
+        }
+        return `${elapsedInHour | 0} hours ago`;
+    }
+    const dates = [date.getDate(), date.getMonth(), date.getFullYear()];
+    return `${dates[0]}/${dates[1]}/${dates[2]}`
 }

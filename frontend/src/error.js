@@ -1,6 +1,5 @@
-export function errors(errorMeg) {
-    const errPage = document.getElementById('error-popup');
-    const errMsg = document.getElementById('err-msg');
-    errMsg.value = errorMeg;
-    errPage.style.display = 'block';
+export const loadError = (msg) => {
+    document.getElementById('error-body').textContent = msg;
+    const myModal = new bootstrap.Modal('#error-popup');
+    myModal.show();
 }

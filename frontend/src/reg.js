@@ -1,11 +1,8 @@
-import { errors } from './error.js';
 import { setLogin } from './helpers.js';
 import { sendRequest } from './requests.js';
-import { login } from './login.js';
+import { loadError } from './error.js';
 
-register();
-
-export function register() {
+const register = () => {
 
     const email = document.getElementById('reg-email');
     const name = document.getElementById('reg-name');
@@ -25,16 +22,22 @@ export function register() {
 
     btn.addEventListener("click", () => {
         // post request to register a user
-        sendRequest('/auth/register', 'POST', {
+        sendRequest({
+            route: '/auth/register', 
+            method: 'POST', 
+            body: {
             "email": email.value, 
             "name": name.value,
-            "password": pass1.value,
+            "password": pass1.value,}
         }).then((data) => {
+            console.log(data);
             setLogin(data);
-        })
+        }).catch(data => {
+            console.log(data);
+            loadError(data);
+        });
     });
     
 }
 
-
-
+register();

@@ -8,9 +8,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- You can add your styles and scripts here -->
   <!-- CSS only -->
- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" media="screen" href="styles/provided.css" />
   <script type="module" src="src/helpers.js"></script>
+  <!-- <a href="http://www.freepik.com">Designed by pikisuperstar / Freepik</a> -->
 </head>
 
 
@@ -29,12 +31,16 @@
 
 
   <!-- This is an example app structure, you can modify this as much as you choose -->
-  <header class="banner">
+  <header class="banner" id="header">
     <h1>Slackr</h1>
   </header>
 
 
-  <div id="logged-out">
+  
+
+
+  <main role="main" id="main">
+    <div id="logged-out">
     
       <div id="login">
         <form>
@@ -47,7 +53,7 @@
             <label for="login-password" class="form-label">Password</label>
             <input type="password" class="form-control" id="login-password">
           </div>
-          <button type="submit" class="btn btn-primary" id="login-btn">Login</button>
+          <button type="button" class="btn btn-primary" id="login-btn">Login</button>
         </form>
         Don't have an account? Register <span class="clickable" id="redir-reg">here</span>!
       </div>
@@ -74,52 +80,245 @@
             <label for="reg-pass2" class="form-label">Confirm Password</label>
             <input type="password" class="form-control" id="reg-pass2">
           </div>
-          <button class="btn btn-primary" id="reg-btn">Submit</button>
+          <button type="button" class="btn btn-primary" id="reg-btn">Submit</button>
         </form>
       </div>
       
-  </div>
+    </div>
 
-  <div id="logged-in">
-    HELLO USER!
-  </div>
+    <div id="logged-in">
 
-  <!-- Modal -->
-  <div class="modal" tabindex="-1" id="modal" style="display: block;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <!-- hide channel list -->
+      
+      
+      <!-- channel list -->
+      <div class="offcanvas offcanvas-end show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="channel-list-offcanvas" aria-labelledby="offcanvasScrollingLabel">
+        <div class="offcanvas-header">
+          <h2 class="offcanvas-title" id="channel-list-offcanvas-label">Channels</h2>
+          <button id="channel-list-close" type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          <p>Modal body text goes here.</p>
+        <div class="offcanvas-body">
+          <section id="view-all-channels">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button class="btn btn-primary me-md-2 create-channel-btn" type="button" id="create-channel-btn">+ New Channel</button>
+            </div>
+            
+            <div id="channel-parent" >
+            </div>
+    
+            <div id="channel-parent-template" class="hide">
+              
+              <ul id="public-channel" class="list-group">
+                <h3 class="channel-group">Public Channels</h3>
+              </ul>
+              <br>
+              <ul id="private-channel" class="list-group">
+                <h3 class="channel-group">Private Channels</h3>
+              </ul>
+            </div>
+          </section>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="close-modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+
+      <!-- channel chats -->
+      <section id="individual-channel">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end" id="channel-list-toggle-block">
+          <button id="channel-list-toggle" class="btn btn-outline-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#channel-list-offcanvas" aria-controls="channel-list-offcanvas">-></button>
+        </div>
+        <div class="card" id="channel-chat">
+          <div class="card-header">
+          
+            <nav class="navbar avbar-expand-lg bg-light">
+              <div class="container-fluid">
+                <!-- a brand -->
+                <h5 class="navbar-branch" id="chat-channel-name">Please select a new channel...</h5>
+                <!-- a hamburger menu at the end -->
+                <button type="button" class="btn btn-info hide" id="channel-info-btn">Info</button>
+              </div>
+            </nav>
+          </div>
+          
+          <div class="card-body overflow-scroll d-flex flex-column-reverse" id="chat-box-parent">
+            <div id="chat-box-body">
+            </div>
+          </div>
+
+          <!-- message input area -->
+          <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
+            <!-- input -->
+            <input type="text" class="form-control" id="msg-input"
+              placeholder="Type message">
+            <!-- file input button -> potentially be image sender -->
+            <!-- <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a> -->
+            <!-- send button -->
+            <button type="button" class="btn btn-primary disabled" id="send-msg-btn">Send</button>
+          </div>
+        <!-- channel details place holder -->
+        </div>
+        <div id="channel-details" class="hide">
+        </div>
+      </section> <!-- for channel chats -->
+
+    </div> 
+
+    <!-- Individual message template -->
+    <div id="msg-template" class="d-flex pb-2 hide">
+      <!-- profile pic -->
+      <img src="images/default4.png" alt="avatar" class="mt-1 rounded-circle chat-profile-pic">
+      <div class="d-flex flex-column">
+        <div class="d-flex ps-2">
+          <p class="msg-sender-name fw-semibold small mt-1 mb-1 ps-1">/p>
+          <p class="msg-sent-at small mt-1 mb-1 ps-1 text-muted"></p>
+        </div>
+        <div class="msg-body small ps-3"></div>
+      </div>
+    </div>
+
+
+    <!-- Button trigger modal -->
+    <!-- Modal -->
+    <div class="modal fade" id="error-popup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="error-title">Oops, something went wrong</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="error-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
+    <!-- Channel Join Popover template -->
+    
+    <div class="modal fade" id="join-channel-popup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Not a member yet, join now?</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Nope</button>
+            <button type="button" class="btn btn-primary" id="join-channel-btn">Join</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <main role="main">
-    <!-- app goes here -->
+    <!-- Channel creation div placeholder -->
+
+    <div id="create-channel-parent">
+    </div>
+
+    <!-- Channel creation popup screen template -->
+    <div class="modal fade" id="create-channel-popup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">New channel</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="create-channel-name" class="col-form-label">Channel name:</label>
+                <div class="input-group has-validation">
+                  <input type="text" class="form-control" id="create-channel-name" aria-describedby="inputGroupPrepend3 validation-channel-name-feedback" required>
+                  <div id="validation-channel-name-feedback" class="invalid-feedback">
+                    Please choose a channel name.
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="create-channel-description" class="col-form-label">Channel description (Optional):</label>
+                <textarea class="form-control" id="create-channel-description"></textarea>
+              </div>
+              <div class="mb-3">
+                <input class="form-check-input" type="checkbox" value="" id="create-channel-private">
+                <label class="form-check-label" for="create-channel-private">
+                  Make the channel private
+                </label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="create-channel-submit">Create</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- channel details modal -->
+    <div class="modal fade" id="channel-dets-template" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">Details</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="channel-dets-body">
+            <!-- name, creator, created in -->
+            <div class="channel-dets-info">
+              <div class="channel-dets-child">
+                <div>
+                  <span>Channel Name:</span>
+                  <input id="channel-dets-name" type="text"></input>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm channel-dets-edit-btn" for="channel-dets-name">Edit</button>
+              </div>
+              <hr>
+              <div>
+                <span>Created by:</span> 
+                <span id="channel-dets-creator" class="clickable"></span>
+              </div>
+              <hr>
+              <div>
+                <span>Created on:</span> 
+                <span id="channel-dets-date"></span>
+              </div>
+              <hr>
+              <div class="channel-dets-child">
+                <div>
+                  <span class="align-top">Description: </span>
+                  <textarea id="channel-dets-description" contenteditable="true"></textarea>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm channel-dets-edit-btn" for="channel-dets-description">Edit</button>
+              </div>
+            </div>
+            <hr>
+            <!-- leave channel -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="button" class="btn btn-outline-danger" id="leave-channel-btn">Leave</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
-  <footer>
+  <!-- <footer id="app-footer" class="fixed-bottom">
     <p>&copy; Slackr</p>
-  </footer>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.6/dist/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+  </footer> -->
+  <!-- <script src="jquery-3.6.1.min.js"></script> -->
   <script 
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" 
     integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" 
-    crossorigin="anonymous"></script>
-  <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>
+    crossorigin="anonymous"
+  > </script>
+
   <script type="module" src="src/main.js"></script>
   <script type="module" src="src/login.js"></script>
   <script type="module" src="src/reg.js"></script>
+  <script type="module" src="src/channels.js"></script>
+  <script type="module" src="src/channel.js"></script>
+  <script type="module" src="src/messages.js"></script>
 </body>
 
 </html>

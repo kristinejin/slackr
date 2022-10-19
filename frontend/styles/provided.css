@@ -2,12 +2,16 @@
 /* base styles, feel free to edit */
 html, body {
     margin: 0;
+    /* padding: 2vh 4vw 2vh 4vw; */
     padding: 0;
     background-color: #fafafa;
     height: 100%;
     font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+#header {
+    padding-top: 4%;
+}
 
 .clickable {
     color:#215af2;
@@ -20,5 +24,80 @@ html, body {
 }
 
 .hide {
-    display: none;
+    display: none !important;
 }
+
+.channel-elements {
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.channel-elements:hover {
+    cursor: pointer;
+}
+
+.btn-primary {
+    /* --bs-btn-color: white;
+    
+    --bs-btn-hover-bg: rgb(186, 151, 91);
+    --bs-btn-active-bg: rgb(86, 65, 28);
+    --bs-btn-disabled-bg: rgba(204, 176, 128, 0.69); */
+
+    /* borders */
+    /* --bs-btn-active-border-color:rgb(204, 176, 128);
+    --bs-btn-border-color: rgb(204, 176, 128);
+    --bs-btn-hover-border-color:rgb(204, 176, 128);
+    --btn-disabled-border-color: rgb(204, 176, 128); */
+
+
+    --bs-btn-font-weight: 600;
+    --bs-btn-color: var(--bs-white);
+    --bs-btn-bg: rgb(204, 176, 128);
+    --bs-btn-border-color: rgb(204, 176, 128);
+    --bs-btn-border-radius: .5rem;
+    --bs-btn-hover-color: var(--bs-white);
+    --bs-btn-hover-bg: rgb(167, 143, 105);
+    --bs-btn-hover-border-color: rgb(167, 143, 105);
+    --bs-btn-focus-shadow-rgb: rgb(167, 143, 105);
+    --bs-btn-active-color: var(--bs-white);
+    --bs-btn-active-bg: rgb(143, 123, 91);
+    --bs-btn-active-border-color: rgb(143, 123, 91);
+    --bs-btn-disabled-bg: rgb(204, 176, 128);
+    --bs-btn-disabled-border-color: rgb(204, 176, 128);
+}
+
+.channel-dets-child {
+    display: flex;
+    justify-content: space-between;
+}
+
+.channel-dets-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    row-gap: 20%;
+}
+
+.align-to-end {
+    display: flex;
+    align-self: flex-end;
+}
+
+#logged-in {
+    display: flex;
+}
+
+#channel-list-off-canvas {
+    max-width:250px;
+}
+
+.chat-profile-pic {
+    height: 30px; 
+    width:30px;
+}
+
+.senderName {
+    color:rgba(113, 66, 8, 0.669);
+}
+

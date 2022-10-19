@@ -1,7 +1,7 @@
 import { BACKEND_PORT } from './config.js';
-import { register } from './reg.js'
 import { setLogin } from './helpers.js';
 import { sendRequest } from './requests.js';
+import { loadError } from './error.js';
 
 // email (text)
 // password (password)
@@ -12,10 +12,7 @@ import { sendRequest } from './requests.js';
 
 // when user is not logged in, present a login form
 
-login();
-
-
-export function login() {
+const login = () => {
     // Redirect to register page
     const regLink = document.getElementById('redir-reg')
     regLink.addEventListener("click", () => {
@@ -32,12 +29,20 @@ export function login() {
 
     btn.addEventListener("click", (event) => {
         // post request to log in 
-        sendRequest('/auth/login', 'POST', {
+        console.log("he;p");
+        sendRequest({
+            route: '/auth/login', 
+            method: 'POST', 
+            body: {
             "email": email.value, 
             "password": password.value
-        }).then((data) => {
+        }}).then((data) => {
             setLogin(data);
+        }).catch(data => {
+            loadError("Oops, something went wrong",data);
         });
     });
 }
 
+
+login();
