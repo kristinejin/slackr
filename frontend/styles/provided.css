@@ -114,3 +114,7 @@ html, body {
 .main-btns:last-of-type {
     margin-left: auto;
 }
+
+#user-profile-toggle-pass:hover {
+    cursor: pointer;
+}

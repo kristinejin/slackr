@@ -484,6 +484,8 @@ const pinMsgMain = (pin, msgEle, channel, msgId) => {
     })
 }
 
+const publicUserProfile = new bootstrap.Modal('#public-user-profile');
+
 // display a message in the chat
 const displayMsg = (msg, appendStart, appendTo, idPrefix) => {
     // clone the message template
@@ -503,6 +505,31 @@ const displayMsg = (msg, appendStart, appendTo, idPrefix) => {
     if (senderUid.toString() === localStorage.getItem('userId')) {
         actionEle.push(...setSenderMsg(msgSenderHtml, msgReactParent, newMsg));
     }
+
+    msgSenderHtml.setAttribute('sendId', senderUid.toString());
+
+    msgSenderHtml.addEventListener('click', () => {
+        // senderUid
+        // get sender info
+
+        const profilePic = document.getElementById('public-user-profile-pic');
+        const name = document.getElementById('public-user-profile-name');
+        const bio = document.getElementById('public-user-profile-bio');
+        const email = document.getElementById('public-user-profile-email');
+        sendRequest({
+            route: '/user/' + senderUid,
+            method: 'GET',
+            token: localStorage.getItem('token')
+        }).then(data => {
+            if (data.image) {
+                profilePic.src = data.image;
+            }
+            name.innerText = data.name;
+            bio.innerText = data.bio;
+            email.innerText = data.email;
+            publicUserProfile.show();
+        })
+    });
 
     // msg pin
     const pin = createMsgActionIcon(msgReactParent, 'bi-pin-angle', 'pin');

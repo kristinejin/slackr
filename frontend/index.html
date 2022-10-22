@@ -132,7 +132,7 @@
             <button class="btn btn-outline-dark" type="button">Logout?</button>
           </div>
           <div>
-            <button class="btn btn-outline-dark" type="button">Profile?</button>
+            <button id="user-profile-btn" class="btn btn-outline-dark" type="button">Profile</button>
           </div>
         </div>
         <div class="card" id="channel-chat">
@@ -144,10 +144,18 @@
                 <h5 class="navbar-branch" id="chat-channel-name">Please select a new channel...</h5>
                 <!-- icon for channel pinned messages? -->
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <!-- Channel pinned message -->
                   <div class="d-flex btn btn-outline-dark small gap-1" id="pinned-msg-btn">
                     <i class="bi bi-pin-angle-fill"></i>
                     <span>Pinned</span>
                   </div>
+
+                  <!-- Channel invite -->
+                  <div class="d-flex btn btn-outline-dark gap-1" id="channel-invite-btn">
+                    <i class="bi bi-person-plus"></i>
+                    <span>Invite</span>
+                  </div>
+                  
                   <!-- Btn for channel details -->
                   <div class="d-flex btn btn-outline-dark gap-1" id="channel-info-btn">
                     <i class="bi bi-three-dots-vertical"></i>
@@ -368,6 +376,84 @@
         </div>
       </div>
     </div>
+
+    <!-- View user profile from clicking usernames in channel chats -->
+    <div class="modal fade" id="public-user-profile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">User information</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="public-user-profile-body">
+              <div class="gap-1">
+                <img id="public-user-profile-pic" src="images/default4.png" alt="avatar" class="mb-1 rounded-circle chat-profile-pic">
+                <!-- <span>Username: </span> -->
+                <span id="public-user-profile-name"></span>
+              </div>
+
+              <div>
+                <span>Bio: </span>
+                <span id="public-user-profile-bio"></span>
+              </div>
+
+              <div>
+                <span>Email: </span>
+                <span id="public-user-profile-email"></span>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for user's own profile -->
+    <div class="modal fade" id="user-profile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Profile</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="user-profile-body">
+              <form class="row g-3">
+                <div class="col-md-6 d-flex justify-content-center">
+                  <img id="user-profile-pic" src="images/default4.png" alt="avatar" class="rounded-circle" style="max-height: 100px; max-width: 100px;">
+                </div>
+                <div class="col-md-6 d-flex flex-column align-self-center">
+                  <label for="user-profile-new-pic" class="pb-2">Upload New Profile Photo</label>
+                  <input id="user-profile-new-pic" type="file" class="form-control">
+                </div>
+                <div class="col-md-6">
+                  <label for="user-profile-name" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="user-profile-name">
+                </div>
+                <div class="col-md-6">
+                  <label for="user-profile-email" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="user-profile-email">
+                </div>
+                <div class="col-md-12">
+                  <label for="user-profile-new-pass" class="form-label">New Password</label>
+                  <div class="input-group">
+                    <input type="password" class="form-control" id="user-profile-new-pass" aria-describedby="toggle-pass">
+                    <i class="input-group-text bi bi-eye" id="user-profile-toggle-pass"></i>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <label for="user-profile-bio" class="form-label">Bio</label>
+                  <textarea class="form-control" id="user-profile-bio" rows="3" placeholder="No bio"></textarea>
+                </div>
+              </form>
+          </div>
+
+          <div class="modal-footer">
+            <button id="user-profile-update-btn" type="button" class="btn btn-primary" >Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     
 
   </main>
@@ -376,7 +462,7 @@
   </footer> -->
   <!-- <script src="jquery-3.6.1.min.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
 
   <script type="module" src="src/main.js"></script>
   <script type="module" src="src/login.js"></script>
@@ -384,6 +470,7 @@
   <script type="module" src="src/channels.js"></script>
   <script type="module" src="src/channel.js"></script>
   <script type="module" src="src/messages.js"></script>
+  <script type="module" src="src/users.js"></script>
 </body>
 
 </html>
