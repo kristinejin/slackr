@@ -159,13 +159,13 @@ export const viewChannel = (cid) => {
 const openChannelList = () => {
     // console.log(typeof(window.innerWidth));
     if (window.innerWidth >= 740) {
-        document.getElementById("individual-channel").style.width = 'calc(100vw - 400px)';
+        document.getElementById("individual-channel").style.marginLeft = '400px';
     }
 }
   
 /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
 const closeChannelList = () => {
-    document.getElementById("individual-channel").style.width = '100vw';
+    document.getElementById("individual-channel").style.marginLeft = '0';
 }
 
 const myOffcanvas = document.getElementById('channel-list-offcanvas');

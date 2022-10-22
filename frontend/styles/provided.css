@@ -101,3 +101,16 @@ html, body {
     color:rgba(113, 66, 8, 0.669);
 }
 
+.msg-parent:hover {
+    background-color: gainsboro;
+    cursor: pointer;
+}
+
+.action-icon:hover {
+    transform: scale(1.2);
+    /* color: rgb(241, 223, 176); */
+}
+
+.main-btns:last-of-type {
+    margin-left: auto;
+}

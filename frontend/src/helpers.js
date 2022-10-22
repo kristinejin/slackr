@@ -54,7 +54,11 @@ export const setLogin = (data) => {
 
 export const cloneDiv = (htmlid, id) => {
     const newDiv = document.getElementById(htmlid).cloneNode(true);
-    newDiv.setAttribute('id', id);
+    if (!id) {
+        newDiv.removeAttribute('id');
+    } else {
+        newDiv.setAttribute('id', id);
+    }
     newDiv.classList.remove('hide');
     return newDiv;
 }

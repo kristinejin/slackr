@@ -25,3 +25,19 @@ export function sendRequest({route, method, body, token}) {
         .catch(data => reject(data));
     });
 }
+
+export function sendRequestRaw({route, method, body, token}) {
+    const options = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+        },
+        method: method,
+    }
+    if (body !== undefined) {
+        options.body = JSON.stringify(body);
+    }
+    return fetch("http://localhost:5005" + route, options).then(res => {
+        return res.json();
+    });
+}
