@@ -172,14 +172,16 @@
           </div>
 
           <!-- message input area -->
-          <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
+          <div class="text-muted d-flex justify-content-start align-items-center pt-3 mt-2">
             <!-- input -->
             <input type="text" class="form-control" id="msg-input"
               placeholder="Type message">
             <!-- file input button -> potentially be image sender -->
             <!-- <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a> -->
             <!-- send button -->
-            <button type="button" class="btn btn-primary disabled" id="send-msg-btn">Send</button>
+            <button type="button" class="small btn btn-outline-dark disabled" id="send-msg-btn"><i class="bi bi-send"></i></button>
+            <button type="button" class="small btn btn-outline-dark" id="send-image-btn"><i class="bi bi-images"></i></button>
+            <input type="file" id="chat-image-upload" class="hide form-control">
           </div>
         </div> <!-- for channel chats -->
 
@@ -363,6 +365,25 @@
       </div>
     </div>
 
+    <!-- image edit modal -->
+    <div class="modal fade" id="edit-img-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Editing message</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="edit-img-body">
+            <input type="file" class="form control" id="edit-img-input">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="edit-img-btn">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Pinned Message Board -->
     <div class="modal fade" id="pinned-board" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -478,6 +499,34 @@
         Default checkbox
       </label>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="all-img-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-body">
+            <!-- carousel -->
+            <div id="img-carousel" class="carousel slide carousel-dark" data-interval="false">
+              <div class="carousel-inner" id="all-img-body"></div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#img-carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#img-carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- carousel body element => add active class will set the item to the open element -->
+    <div class="carousel-item hide" id="carousel-item-template">
+    </div>
+
+    <img src="images/default.jpg" class="d-block w-100 hide all-img" alt="chat image" id="carousel-img-template">
     
 
   </main>

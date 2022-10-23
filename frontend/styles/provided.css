@@ -118,3 +118,13 @@ html, body {
 #user-profile-toggle-pass:hover {
     cursor: pointer;
 }
+
+.chat-img {
+    max-width: 200px;
+    max-height: 200px;
+}
+
+.all-img {
+    /* max-height: 80vh;
+    max-width: 80vw; */
+}

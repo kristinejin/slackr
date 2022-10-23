@@ -2,7 +2,8 @@ import { loadError } from "./error.js";
 import { sendRequest, sendRequestRaw } from "./requests.js";
 import { cloneDiv, parseDate, fileToDataUrl } from "./helpers.js";
 
-const pinBoard = new bootstrap.Modal(document.getElementById('pinned-board'));
+
+// 23/10: edit image edit two the same time ?
 
 // ----------------------------------
 // Fetch all
@@ -138,9 +139,8 @@ const editMsgDOM = (msgEle, channelId) => {
         })
 }
 
+
 const editMsg = (msgEle) => {
-    // modal for message input
-    // request
     const editModal = new bootstrap.Modal(document.getElementById('edit-msg-modal'));
     const msgBodyHtml = msgEle.children[1].children[1];
     const editModalInput = document.getElementById('edit-msg-modal-body');
@@ -190,14 +190,67 @@ const editMsg = (msgEle) => {
      
 }
 
+const updateImg = (msgEle, channel, editModal) => {
+    const input = document.getElementById('edit-img-input');
+    const file = input.files[0];
+    const msgId = msgEle.id.replace('pinned-', '');
+    fileToDataUrl(file)
+        .then(data => {
+            return sendRequest({
+                route: '/message/' + channel + '/' + msgId,
+                method: 'PUT',
+                body: {
+                    image: data
+                },
+                token: localStorage.getItem('token')
+            })
+        }).then(() => {
+            console.log(msgId)
+            return fetchAllMsg(channel);
+        }).then(messages => {
+            console.log(messages);
+            messages.forEach(msg => {
+                if (msg.id === parseInt(msgEle.id)) {
+                    displayImageChannel(msgEle, msg.image);
+                    setTime(msgEle, msg.editedAt);
+                    showEditedStatus(msgEle);
+                }
+            })
+        }).catch(data => loadError(data));
+        
+}
+
+
+const editImg = (msgEle, channel) => {
+    const editModalEle = document.getElementById('edit-img-modal');
+    const editModal = new bootstrap.Modal(editModalEle);
+    const editBody = document.getElementById('edit-img-body');
+    if (editBody.children.length > 1) {
+        editBody.removeChild(editBody.firstChild);
+    }
+
+    const imgHtml = msgEle.children[1].children[1].firstElementChild.cloneNode(true);
+
+    editBody.insertBefore(imgHtml, editBody.firstChild);
+    editModal.show();
+
+    const editBtn = document.getElementById('edit-img-btn');
+    
+    editBtn.addEventListener('click', () => updateImg(msgEle, channel));
+    editModal.hide();
+    editModalEle.addEventListener('hidden.bs.modal', () => {
+        editBtn.removeEventListener('click', updateImg(msgEle, channel));
+    })
+}
+
 // ----------------------------------
 // -----------Action Icon------------
 // ----------------------------------
 
-const createMsgActionIcon = (msgReactParent, type, identifier) => {
+const createMsgActionIcon = (msgActionParent, type, identifier) => {
     const action = document.createElement('i');
     action.classList.add('bi', type, 'action-icon', identifier);
-    msgReactParent.appendChild(action);
+    msgActionParent.appendChild(action);
     return action;
 }
 
@@ -215,11 +268,11 @@ const getActionComponent = (actionList, target) => {
 // -----------React Icons------------
 // ----------------------------------
 
-const cloneAndAppendReaction = (msgReactParent, reactId) => {
+const cloneAndAppendReaction = (msgActionParent, reactId) => {
     const react = cloneDiv(reactId);
     react.classList.add('action-icon', reactId, 'hide');
     react.setAttribute('reacted', false);
-    return msgReactParent.appendChild(react);
+    return msgActionParent.appendChild(react);
 }
 
 const reactRequest = (channel, msgId, reactName, type) => {
@@ -381,37 +434,42 @@ const msgReact = (actionList, reactIds, reactEles, msgEle, channel, reactsData) 
 // ----------Set Sender Msg----------
 // ----------------------------------
 
-
+const pinBoard = new bootstrap.Modal(document.getElementById('pinned-board'));
 // display a message send by authorised user
-const setSenderMsg = (senderEle, msgReactParent, msgEle) => {
+const setSenderMsg = (senderEle, msgActionParent, msgEle, msg, channel) => {
     senderEle.classList.add('senderName');
 
     // TODO: make this a function?
-    const remove = createMsgActionIcon(msgReactParent, 'bi-trash', 'remove');
-    const edit = createMsgActionIcon(msgReactParent, 'bi-pencil-square', 'edit');
+    const remove = createMsgActionIcon(msgActionParent, 'bi-trash', 'remove');
+    const edit = createMsgActionIcon(msgActionParent, 'bi-pencil-square', 'edit');
     
     remove.addEventListener('click', () => removeMsg(msgEle));
     edit.addEventListener('click', () => {
         // close pin modal modal
-        if (!msgReactParent.id) {
+        if (!msgActionParent.id) {
             pinBoard.hide();
         }
-    
-        editMsg(msgEle);
+        if (msg.image) {
+            editImg(msgEle, channel);
+        }
+        else {
+            editMsg(msgEle);
+        }
+        
     });
     return [remove, edit];
 }
 
 
 const hideMsgAction = (msgEle) => {
-    const msgReactParent = msgEle.children[1].children[0].children[3];
-    msgReactParent.classList.add('hide');
+    const msgActionParent = msgEle.children[1].children[0].children[3];
+    msgActionParent.classList.add('hide');
     
 };
 
 const showMsgAction = (msgEle) => {
-    const msgReactParent = msgEle.children[1].children[0].children[3];
-    msgReactParent.classList.remove('hide');
+    const msgActionParent = msgEle.children[1].children[0].children[3];
+    msgActionParent.classList.remove('hide');
 };
 
 const setPinned = (pin, msgEle) => {
@@ -482,29 +540,7 @@ const pinMsgMain = (pin, msgEle, channel, msgId) => {
 }
 
 const publicUserProfile = new bootstrap.Modal('#public-user-profile');
-
-// display a message in the chat
-const displayMsg = (msg, appendStart, appendTo, idPrefix) => {
-    // clone the message template
-    const newMsg = cloneDiv('msg-template', `${msg.id}`);
-    newMsg.setAttribute('mid', newMsg.id);
-
-    // sender details (name, profile pic)
-    // images of message
-
-    setMsgBody(newMsg, msg.message);
-
-    // get all required html fields
-    const senderUid = msg.sender;
-    const msgSenderHtml = newMsg.children[1].children[0].children[0];
-    const msgReactParent = newMsg.children[1].children[0].children[3];
-    const actionEle = [];
-    if (senderUid.toString() === localStorage.getItem('userId')) {
-        actionEle.push(...setSenderMsg(msgSenderHtml, msgReactParent, newMsg));
-    }
-
-    msgSenderHtml.setAttribute('sendId', senderUid.toString());
-
+const displaySenderProfile = (senderUid, msgSenderHtml) => {
     msgSenderHtml.addEventListener('click', () => {
         // senderUid
         // get sender info
@@ -527,30 +563,112 @@ const displayMsg = (msg, appendStart, appendTo, idPrefix) => {
             publicUserProfile.show();
         })
     });
+}
+
+/* 
+    Takes in an element for displaying message and an image,
+    add image to the given element
+    returns the added image element
+*/
+const displayImageChannel = (msgEle, imageData) => {
+    const msgBody = msgEle.lastElementChild.lastElementChild;
+    if (msgBody.children.length > 0) {
+        removeAllChild(msgBody);
+    }
+    const imageEle = document.createElement('img');
+    // imageEle.setAttribute('id', something) ??
+    imageEle.src = imageData;
+    imageEle.alt = "image sent by user";
+    imageEle.classList.add('chat-img');
+    msgBody.appendChild(imageEle);
+    return imageEle;
+}
+
+
+const allImgModal = new bootstrap.Modal('#all-img-modal');
+const allImgBody = document.getElementById('all-img-body');
+const loadMsgToCarousel = (messages, firstId) => {
+    messages = messages.reverse();
+    messages.forEach(msg => {
+        if (msg.image) {
+            const item = cloneDiv('carousel-item-template');
+            if (msg.id === parseInt(firstId)) {
+                item.classList.add('active');
+            }
+            const image = cloneDiv('carousel-img-template');
+            image.src = msg.image;
+            item.appendChild(image);
+            allImgBody.appendChild(item);
+        }
+    })
+}
+const displayImageInModal = (imageEle, msgId, channelId) => {
+    imageEle.addEventListener('click', () => {
+        // load all image to allImgBody 
+        fetchAllMsg(channelId)
+            .then(data => {
+                removeAllChild(allImgBody);
+                loadMsgToCarousel(data, msgId);
+                allImgModal.show();
+            })
+    })
+}
+
+
+// display a message in the chat
+const displayMsg = (msg, appendStart, appendTo, idPrefix) => {
+    // clone the message template
+    const newMsg = cloneDiv('msg-template', `${msg.id}`);
+    newMsg.setAttribute('mid', newMsg.id);
+
+    const channelId = localStorage.getItem('currChannel');
+    let imageEle;
+    if (msg.message) {
+        setMsgBody(newMsg, msg.message);
+    } else {
+        imageEle = displayImageChannel(newMsg, msg.image);
+    }
+
+    if (imageEle) {
+        displayImageInModal(imageEle, newMsg.id, channelId);
+    }
+
+    // record sender userId on the dom
+    const senderUid = msg.sender;
+    const msgSenderHtml = newMsg.children[1].children[0].children[0];
+    msgSenderHtml.setAttribute('sendId', senderUid.toString());
+
+    // set eventlistener for clicking sender name, and displays profiles when event fired
+    displaySenderProfile(senderUid, msgSenderHtml);
+
+    // get all required html fields for message actions (pin/react/delete/edit)
+    const msgActionParent = newMsg.children[1].children[0].children[3];
+    const actionEle = [];
+    if (senderUid.toString() === localStorage.getItem('userId')) {
+        actionEle.push(...setSenderMsg(msgSenderHtml, msgActionParent, newMsg, msg, channelId));
+    }
 
     // msg pin
-    const pin = createMsgActionIcon(msgReactParent, 'bi-pin-angle', 'pin');
+    const pin = createMsgActionIcon(msgActionParent, 'bi-pin-angle', 'pin');
     actionEle.push(pin);
     if (idPrefix !== undefined) {
         newMsg.setAttribute('id', idPrefix + newMsg.id);
         newMsg.setAttribute('mid', newMsg.id);
     } else {
         pin.setAttribute('id', 'pin-' + newMsg.id);
-        msgReactParent.setAttribute('id', 'actions-' + newMsg.id)
+        msgActionParent.setAttribute('id', 'actions-' + newMsg.id)
     }
 
-    const channelId = localStorage.getItem('currChannel');
-
     // msg react
-    actionEle.push(createMsgActionIcon(msgReactParent, 'bi-emoji-sunglasses', 'react'));
+    actionEle.push(createMsgActionIcon(msgActionParent, 'bi-emoji-sunglasses', 'react'));
 
     const reactEles = [];
     const reactIds = ['reaction-sunglasses', 'reaction-ghost', 'reaction-face'];
 
-    reactEles.push(cloneAndAppendReaction(msgReactParent, reactIds[0]));
-    reactEles.push(cloneAndAppendReaction(msgReactParent, reactIds[1]));
-    reactEles.push(cloneAndAppendReaction(msgReactParent, reactIds[2]));
-    const close = createMsgActionIcon(msgReactParent, 'bi-x', 'reaction-close');
+    reactEles.push(cloneAndAppendReaction(msgActionParent, reactIds[0]));
+    reactEles.push(cloneAndAppendReaction(msgActionParent, reactIds[1]));
+    reactEles.push(cloneAndAppendReaction(msgActionParent, reactIds[2]));
+    const close = createMsgActionIcon(msgActionParent, 'bi-x', 'reaction-close');
     close.classList.add('hide');
     reactEles.push(close);
 
@@ -572,11 +690,7 @@ const displayMsg = (msg, appendStart, appendTo, idPrefix) => {
     }).then(data => {
         msgSenderHtml.innerText = data.name;
         if (data.image) {
-            // TODO: CHECK THIS TO BE RIGHT!!!
-            userProfilePic.src = data.image;
-            // fileToDataUrl(data.image)
-            //     .then(data => msgProfileHtml.src = data.image)
-            //     .catch(data => loadError(data));    
+            userProfilePic.src = data.image;  
         }
     })
 
@@ -586,8 +700,6 @@ const displayMsg = (msg, appendStart, appendTo, idPrefix) => {
     } else {
         setTime(newMsg, msg.sentAt);
     }
-
-    // TODO: for pinned, change this to a parameter?
 
     // append new messages to the start of chat 
     if (appendStart) {
@@ -721,3 +833,33 @@ showPinBtn.addEventListener('click', () => {
         .catch(data => loadError(data));
     // fuck, same functionality... meaning using display messages function? does it  work? 
 })
+
+
+const imageBtn = document.getElementById('send-image-btn');
+const imageUpload = document.getElementById('chat-image-upload');
+imageBtn.addEventListener('click', () => {
+    imageUpload.click();
+})
+
+
+imageUpload.addEventListener('change', () => {
+    const newImage = imageUpload.files[0];
+    const channel = localStorage.getItem('currChannel');
+    fileToDataUrl(newImage)
+        .then(data => {
+            return sendRequest({
+                route: '/message/' + channel,
+                method: 'POST',
+                body: {
+                    "image": data
+                },
+                token: localStorage.getItem('token')
+            })
+        })
+        .then(() => {
+            // want to display the new message
+            getSingleMsg(channel, 0);
+        })
+        .catch(data => loadError(data))
+})
+
