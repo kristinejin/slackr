@@ -2,9 +2,6 @@ import { loadError } from "./error.js";
 import { sendRequest, sendRequestRaw } from "./requests.js";
 import { cloneDiv, parseDate, fileToDataUrl } from "./helpers.js";
 
-// 21/10 TODO for tmrw:
-//  --> Bug: when close the thing, it does not update
-
 const pinBoard = new bootstrap.Modal(document.getElementById('pinned-board'));
 
 // ----------------------------------

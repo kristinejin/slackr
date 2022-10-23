@@ -1,11 +1,113 @@
 import { sendRequest } from "./requests.js";
-import { fileToDataUrl } from "./helpers.js";
+import { cloneDiv, fileToDataUrl } from "./helpers.js";
 import { loadError } from "./error.js";
+import { loadChannels } from "./channels.js";
+
+const currUser = localStorage.getItem('token');
+const getAllUsers = new Promise((resolve, reject) => {
+    sendRequest({
+        route: '/user',
+        method: 'GET',
+        token: currUser
+    }).then(data => {
+        //data.users gives list of tuples containing {id: id, name: name}
+        const users = data.users;
+        Promise.all(users.map((user) => sendRequest({
+            route: '/user/' + user.id, 
+            method: 'GET',
+            token: currUser
+        }))).then((usersInfo) => {
+            const names = [];
+            for (const { email, name } of usersInfo) {
+                names.push({name, email});
+            }
+            resolve({names: names, users:users});
+        })
+    })
+});
+
+const mergeInfo = (arr1, arr2) => {
+    return arr1.map((names) => {
+        const numbers = arr2.filter((users) => users['email'] === names['email']);
+        names.id = numbers[0].id;
+        return names;
+    })
+}
 
 const inviteBtn = document.getElementById('channel-invite-btn');
+const inviteModal = new bootstrap.Modal('#invite-modal');
+const inviteBody = document.getElementById('invite-modal-body');
+
+const resetInviteModal = () => {
+    while (inviteBody.firstChild) {
+        inviteBody.removeChild(inviteBody.lastChild);
+    }
+}
+const inviteCheckboxId = 'invite-checkbox';
+
 inviteBtn.addEventListener('click', () => {
     // load user information
     // show invite modal
+    resetInviteModal();
+
+    const channelMembers = [];
+
+    sendRequest({
+        route: '/channel/' + localStorage.getItem('currChannel'),
+        method: 'GET',
+        token: localStorage.getItem('token') 
+    }).then(data => {
+        channelMembers.push(...data.members);
+        return getAllUsers;
+    }).then((info) => {
+        const userInfo = mergeInfo(info.names, info.users);
+
+        // reference: https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value
+        userInfo.sort((a, b) => a.name.localeCompare(b.name));
+
+        for (const user of userInfo) {
+            const userEle = cloneDiv(inviteCheckboxId, 'invite-' + user.id);
+
+            // make checkbox checked and disabled when a user is already a member of a channel
+            if (channelMembers.includes(user.id)) {
+                userEle.firstElementChild.setAttribute('disabled', '');
+                userEle.firstElementChild.setAttribute('checked', '');
+            }
+            userEle.lastElementChild.innerText = user.name + ' (' + user.email + ')';
+            inviteBody.appendChild(userEle);
+        }
+        
+        inviteModal.show();
+    })
+})
+
+const inviteSubmit = document.getElementById('invite-submit-btn');
+inviteSubmit.addEventListener('click', () => {
+    const invittEleArr = Array.from(inviteBody.children);
+    invittEleArr.forEach(userEle => {
+        // check user is already a member
+        const isMember = userEle.firstElementChild.hasAttribute('disabled');
+
+        const isChecked = userEle.firstElementChild.checked;
+
+        const userId = parseInt(userEle.id.replace('invite-', ''));
+
+        if (isChecked && !isMember) {
+            // send request to invite user
+            sendRequest({
+                route: '/channel/' + localStorage.getItem('currChannel') + '/invite',
+                method: 'POST',
+                body: {
+                    "userId": userId
+                },
+                token: currUser
+            }).then(data => {
+                console.log('user invited')
+            }).catch(data => loadError(data));
+        }
+
+        inviteModal.hide();
+    })
 })
 
 const userProfile = document.getElementById('user-profile-btn');
@@ -21,6 +123,16 @@ const userNewImage = document.getElementById('user-profile-new-pic');
 
 let currEmail;
 
+const setUserInfoOnModal = (data) => {
+    userName.value = data.name;
+    userEmail.value = data.email;
+    currEmail = data.email;
+    userBio.value = data.bio;
+    if (data.image) { 
+        userImage.src = data.image;
+    }
+}
+
 const updateBtn = document.getElementById('user-profile-update-btn');
 userProfile.addEventListener('click', () => {
     // set new password to default state
@@ -31,24 +143,15 @@ userProfile.addEventListener('click', () => {
 
 
     // get user information
-
     sendRequest({
         route: '/user/' + localStorage.getItem('userId'),
         method: 'GET',
         token: localStorage.getItem('token')
     }).then(data => {
         // set data for modal
-        console.log(data);
-        userName.value = data.name;
-        userEmail.value = data.email;
-        currEmail = data.email;
-        userBio.value = data.bio;
-        if (data.image) {
-            
-            userImage.src = data.image;
-        }
+        setUserInfoOnModal(data);
         userProfileModal.show();
-    })
+    }).catch(data => loadError(data));
 })
 
 togglePassBtn.addEventListener('click', () => {
@@ -69,8 +172,6 @@ togglePassBtn.addEventListener('click', () => {
 
 // update user profile
 updateBtn.addEventListener('click', () => {
-    // image
-
     // name
     const newName = userName.value;
     // email
@@ -87,6 +188,7 @@ updateBtn.addEventListener('click', () => {
         "bio": newBio,
     }
 
+    // image
     Object.keys(requestBody).forEach(key => {
         
         if (key !== "bio" && (!requestBody[key])) {
@@ -108,8 +210,10 @@ updateBtn.addEventListener('click', () => {
                     token: localStorage.getItem('token')
                 });
             })
-            .then(data => {
-                console.log('success image')
+            .then(() => {
+                // update new info on the doms
+                loadChannels();
+                userProfileModal.hide();
             })
             .catch(data => loadError(data));
     } 
@@ -119,8 +223,10 @@ updateBtn.addEventListener('click', () => {
             method: 'PUT',
             body: requestBody,
             token: localStorage.getItem('token')
-        }).then(data => {
-            console.log('success')
+        }).then(() => {
+            // update new info on the doms
+            loadChannels();
+            userProfileModal.hide();
         })
         .catch(data => loadError(data));
     }
