@@ -9,8 +9,31 @@ html, body {
     font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+/*     Main     */
+
 #header {
     padding-top: 4%;
+    display: flex;
+    justify-content: space-around;
+    color: rgba(52, 50, 45, 0.85);
+    font-family: Monospace;
+}
+
+
+#logged-out {
+    padding: 5%;
+}
+
+#logged-in {
+    display: flex;
+}
+
+#channel-list-off-canvas {
+    max-width:250px;
+}
+
+#individual-channel {
+    width: 100%;
 }
 
 .clickable {
@@ -25,16 +48,6 @@ html, body {
 
 .hide {
     display: none !important;
-}
-
-.channel-elements {
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.channel-elements:hover {
-    cursor: pointer;
 }
 
 .btn-primary {
@@ -54,6 +67,18 @@ html, body {
     --bs-btn-disabled-border-color: rgb(204, 176, 128);
 }
 
+/*     Channel     */
+
+.channel-elements {
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.channel-elements:hover {
+    cursor: pointer;
+}
+
 .channel-dets-child {
     display: flex;
     justify-content: space-between;
@@ -71,17 +96,16 @@ html, body {
     align-self: flex-end;
 }
 
-#logged-in {
-    display: flex;
-}
-
-#channel-list-off-canvas {
-    max-width:250px;
-}
+/*     Chats and messages     */
 
 .chat-profile-pic {
     height: 30px; 
     width:30px;
+}
+
+.chat-img {
+    max-width: 200px;
+    max-height: 200px;
 }
 
 .senderName {
@@ -95,28 +119,11 @@ html, body {
 
 .action-icon:hover {
     transform: scale(1.2);
-    /* color: rgb(241, 223, 176); */
 }
 
-/* .main-btns:last-of-type {
-    margin-left: auto;
-} */
+
+/*     User profile     */
 
 #user-profile-toggle-pass:hover {
     cursor: pointer;
-}
-
-.chat-img {
-    max-width: 200px;
-    max-height: 200px;
-}
-
-.all-img {
-    /* max-height: 80vh;
-    max-width: 80vw; */
-}
-
-
-#individual-channel {
-    width: 100%;
 }

@@ -3,6 +3,10 @@ import { cloneDiv, fileToDataUrl, removeAllChild } from "./helpers.js";
 import { loadError } from "./error.js";
 import { loadChannels } from "./channels.js";
 
+
+/*
+    Return a promise that get all the users in the server
+*/
 const currUser = localStorage.getItem('token');
 const getAllUsers = new Promise((resolve, reject) => {
     if (!localStorage.getItem('token')) {
@@ -31,6 +35,9 @@ const getAllUsers = new Promise((resolve, reject) => {
     })
 });
 
+/*
+    Merge two arrays of user information based on user email
+*/
 const mergeInfo = (arr1, arr2) => {
     return arr1.map((names) => {
         const numbers = arr2.filter((users) => users['email'] === names['email']);
@@ -39,6 +46,9 @@ const mergeInfo = (arr1, arr2) => {
     })
 }
 
+/*  
+    Get all users to display on the invite modal
+*/
 const inviteBtn = document.getElementById('channel-invite-btn');
 const inviteModal = new bootstrap.Modal('#invite-modal');
 const inviteBody = document.getElementById('invite-modal-body');
@@ -84,6 +94,9 @@ inviteBtn.addEventListener('click', () => {
     })
 })
 
+/*  
+    Invites user(s)
+*/
 const inviteSubmit = document.getElementById('invite-submit-btn');
 inviteSubmit.addEventListener('click', () => {
     const invittEleArr = Array.from(inviteBody.children);
@@ -113,6 +126,9 @@ inviteSubmit.addEventListener('click', () => {
     })
 })
 
+// --------------------------
+//  Authorised user profile
+// --------------------------
 const userProfile = document.getElementById('user-profile-btn');
 const userProfileModal = new bootstrap.Modal(document.getElementById('user-profile'));
 const togglePassBtn = document.getElementById('user-profile-toggle-pass');
@@ -124,8 +140,10 @@ const userBio = document.getElementById('user-profile-bio');
 const userImage = document.getElementById('user-profile-pic');
 const userNewImage = document.getElementById('user-profile-new-pic');
 
+/*
+    Set the user information on the user profile modal
+*/
 let currEmail;
-
 const setUserInfoOnModal = (data) => {
     userName.value = data.name;
     userEmail.value = data.email;
@@ -136,6 +154,9 @@ const setUserInfoOnModal = (data) => {
     }
 }
 
+/*
+    Display user profile modal 
+*/
 const updateBtn = document.getElementById('user-profile-update-btn');
 userProfile.addEventListener('click', () => {
     // set new password to default state
@@ -157,6 +178,9 @@ userProfile.addEventListener('click', () => {
     }).catch(data => loadError(data));
 })
 
+/*
+    Toggle button for showing/hiding password 
+*/
 togglePassBtn.addEventListener('click', () => {
     if (userPass.type === 'password') {
         togglePassBtn.classList.remove('bi-eye');
@@ -170,10 +194,10 @@ togglePassBtn.addEventListener('click', () => {
     }
 })
 
-// record original user details
 
-
-// update user profile
+/*
+    request to update user information 
+*/
 updateBtn.addEventListener('click', () => {
     // name
     const newName = userName.value;

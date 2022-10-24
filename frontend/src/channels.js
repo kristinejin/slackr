@@ -3,7 +3,9 @@ import { sendRequest } from './requests.js'
 import { createEventForChannel, viewChannel } from './channel.js';
 import { cloneDiv, removeAllChild } from './helpers.js';
 
-
+/*
+    Call render and create event function for a list of channels
+*/
 const parseChannels = (data) => {
     for (let channel of data.channels) {
         renderChannels(channel.name, channel.id, channel.private, channel.members);
@@ -11,6 +13,9 @@ const parseChannels = (data) => {
     createEventForChannel();
 } 
 
+/*
+    Fetch and load a list of channels
+*/
 export const loadChannels = () => {
     if (!localStorage.getItem('token')) {
         return;
@@ -40,6 +45,9 @@ export const loadChannels = () => {
     
 }
 
+/*
+    Check if authorised user is a member of a channel
+*/
 const checkIsMember = (userId, members) => {
     let isMember = false;
     members.forEach(member => {
@@ -51,6 +59,9 @@ const checkIsMember = (userId, members) => {
     return isMember;
 }
 
+/*
+    Render a channel to the channel list
+*/
 const renderChannels = (channelName, cid, isPrivate, members) => {
     if (!document.getElementById(toString(cid).id)) {
         let channelSection;
@@ -82,9 +93,10 @@ const renderChannels = (channelName, cid, isPrivate, members) => {
     } 
 }
 
-
+/*
+    Create a new channel
+*/
 const createChannels = () => {
-    // --> TODO: to remove values from form
     const createChannelPopup = new bootstrap.Modal('#create-channel-popup');
     document.getElementById('create-channel-btn').addEventListener('click', () => {
         createChannelPopup.show();
@@ -128,6 +140,11 @@ const createChannels = () => {
         createChannelPopup.hide();
     });
 }
-loadChannels();
-createChannels();
+
+// Calls loading and create when page is load each time
+if (localStorage.getItem('token')) {
+    loadChannels();
+    createChannels();
+}
+
 

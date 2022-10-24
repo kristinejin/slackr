@@ -1,21 +1,16 @@
 import { loadChannels } from "./channels.js";
 import { loadError } from "./error.js";
 import { sendRequest } from "./requests.js";
-import { cloneDiv } from "./helpers.js";
+import { cloneDiv, removeAllChild } from "./helpers.js";
 import { getMsg, resetMsgBody } from "./messages.js"
-
-// 17-10 notes:
-// TODO: 
-// 1. enable edit --> text box etc
-// 2. structure chat box --> new msg input
-// 3. display messages --> recursive fetch messages?
-// 4. change botton colors?s
 
 // Global variable for detail popup:   
 //      --> set to global scale to avoid duplicated modal being created when detail being opened multiple time
 const detsPopup = new bootstrap.Modal(document.getElementById('channel-dets-template'));
 
-
+/*
+    set event for each channel button on channel list
+*/
 export const createEventForChannel = () => {
     const allChannels = document.querySelectorAll('.channel-elements');
     allChannels.forEach((channel) => channel.addEventListener('click', () => {
@@ -24,7 +19,9 @@ export const createEventForChannel = () => {
     }));
 }
 
-// Display the join modal if authorised user is not a member of the channel that they selected on
+/*
+    Display the join modal if authorised user is not a member of the channel that they selected on
+*/
 const displayJoin = (cid, channel) => {
     const join = new bootstrap.Modal('#join-channel-popup');
     join.show();
@@ -43,7 +40,9 @@ const displayJoin = (cid, channel) => {
     })
 }
 
-// Updates a channel's detail (name and description) based on the input value
+/*
+    Updates a channel's detail (name and description) based on the input value
+*/
 const updateChannelDets = (cid) => {
     const newName = document.getElementById('channel-dets-name').value;
     let newDescription = document.getElementById('channel-dets-description').value;
@@ -59,7 +58,6 @@ const updateChannelDets = (cid) => {
         },
         token: localStorage.getItem('token')
     }).then(() => {
-        // // TODO: reload channel page
         sendRequest({
             route: '/channel/' + cid,
             method: 'GET',
@@ -70,7 +68,9 @@ const updateChannelDets = (cid) => {
     }).catch(data => loadError(data));
 }
 
-// Set the channel details of a channel
+/*
+    Set the channel details of a channel on the channel info modal
+*/
 const setChannelDets = (channelDets) => {
     // Get channel creator info
     sendRequest({
@@ -78,7 +78,7 @@ const setChannelDets = (channelDets) => {
         method: 'GET',
         token: localStorage.getItem('token')
     }).then(data => {
-        document.getElementById('channel-dets-creator').innerText = data.name + ' (#' + channelDets.email + ')';
+        document.getElementById('channel-dets-creator').innerText = data.name + ' (' + data.email + ')';
     }).catch(data => loadError(data));
 
     // Set other channel details
@@ -87,7 +87,9 @@ const setChannelDets = (channelDets) => {
     document.getElementById('channel-dets-description').innerText = channelDets.description;
 }
 
-// Display channel detail modal from a channel
+/* 
+    Display channel detail modal from a channel
+*/
 const showChannelDets = (channelDets, cid) => {
     setChannelDets(channelDets, cid);
 
@@ -104,7 +106,6 @@ const showChannelDets = (channelDets, cid) => {
             method: 'POST',
             token: localStorage.getItem('token')
         }).then(data => {
-            // TODO: success leave notification?
             loadChannels();
             detsPopup.hide();
             channelChat.classList.add('hide');
@@ -114,15 +115,110 @@ const showChannelDets = (channelDets, cid) => {
     });
 }
 
+/*
+    Resize the size of chat box according to the page size
+*/
 export const resizeChatBox = () => {
-    console.log('resizing')
     const sidebarHeight = document.getElementById('channel-list-offcanvas').offsetHeight;
     const headerHeight = document.getElementById('header').offsetHeight;
     const btnHeight = document.getElementById('channel-list-toggle').offsetHeight;
-    document.getElementById('channel-chat').style.height = `calc(${sidebarHeight}px - ${headerHeight}px - ${btnHeight}px - 0.50em)`;
+    document.getElementById('channel-chat').style.height = `calc(${sidebarHeight}px - ${headerHeight}px - ${btnHeight}px)`;
 }
 
-// Set basic view of individual channel
+/*
+    Event to get channel information 
+*/
+const infoBtn = document.getElementById('channel-info-btn');
+infoBtn.addEventListener('click', () => {
+    const currChannel = localStorage.getItem('currChannel')
+    if (!currChannel) {
+        return;
+    }
+    sendRequest({ 
+        route: '/channel/' + currChannel,
+        method: 'GET',
+        token: localStorage.getItem('token')
+    }).then(data => {
+        showChannelDets(data, currChannel);
+    }).catch (data => console.log(data))
+});
+
+/*
+    Request to get all the members
+*/
+
+const getAllMembers = (cid) => {
+    return new Promise((resolve, reject) => {
+        const currUser = localStorage.getItem('token');
+        if (!currUser) {
+            return;
+        }
+        sendRequest({
+            route: '/channel/' + cid,
+            method: 'GET',
+            token: currUser
+        }).then(data => {
+            //data.users gives list of tuples containing {id: id, name: name}
+            const members = data.members;
+            // console.log(members);
+            Promise.all(members.map((member) => sendRequest({
+                route: '/user/' + member, 
+                method: 'GET',
+                token: currUser
+            }))).then(userInfo => {
+                resolve(userInfo);
+            })
+        }).catch(data => {
+            reject(data);
+        })
+    })
+};
+
+/*
+    Show all the members in a channel in a modal
+*/
+const memberModal = new bootstrap.Modal('#members-modal');
+const viewAllMembers = (cid) => {
+    const memberBody = document.getElementById('members-modal-body');
+    const memberTempId = 'member-template';
+    removeAllChild(memberBody);
+    // console.log(memberBody);
+    getAllMembers(cid)
+        .then(data => {
+            // console.log(data);
+            data.forEach(member => {
+                // show member on the modal
+                const memberEle = cloneDiv(memberTempId);
+                const memberInner = memberEle.children;
+                if (member.image) {
+                    memberInner[0].src = member.image;
+                }
+                memberInner[1].innerText = member.name;
+                memberInner[2].innerText = '(' + member.email + ')';
+                memberBody.append(memberEle);
+            })
+
+            memberModal.show();
+        }).catch(data => loadError(data))
+       
+}
+
+/*
+    Set the event for showing all members in channel button
+*/
+
+const membersBtn = document.getElementById('channel-members-btn');
+membersBtn.addEventListener('click', () => {
+    const currChannel = localStorage.getItem('currChannel')
+    if (!currChannel) {
+        return;
+    }
+   viewAllMembers(currChannel);
+})
+
+/*
+    Set basic view of individual channel and add event for channel buttons
+*/
 const setIndiChannelView = (channelDets, cid) => {
     document.getElementById('chat-channel-name').innerText = channelDets.name;
     resizeChatBox();
@@ -131,14 +227,12 @@ const setIndiChannelView = (channelDets, cid) => {
     getMsg(cid);
 
     localStorage.setItem('currChannel', cid.toString());
-
-    // event to open channel details
-    const infoBtn = document.getElementById('channel-info-btn');
-    infoBtn.classList.remove('hide');
-    infoBtn.addEventListener('click', () => showChannelDets(channelDets, cid));
 }
 
-// Redirect individual channels
+/* 
+    Redirect individual channels on the channel list 
+    to either the individual channel page or option to join
+*/
 export const viewChannel = (cid) => {
     const channel = document.getElementById(cid);
     // get channel info
@@ -148,18 +242,21 @@ export const viewChannel = (cid) => {
         token: localStorage.getItem('token') 
     })
     .then(data => setIndiChannelView(data, cid))
-    .catch(() => displayJoin(cid, channel));
+    .catch(data => displayJoin(cid, channel));
 }
 
+/*
+    Enables channel list toggle 
+*/
 
+// set the chat box to the left
 const openChannelList = () => {
-    // console.log(typeof(window.innerWidth));
     if (window.innerWidth >= 740) {
         document.getElementById("individual-channel").style.marginLeft = '400px';
     }
 }
   
-/* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
+// set the chat box to full page
 const closeChannelList = () => {
     document.getElementById("individual-channel").style.marginLeft = '0';
 }

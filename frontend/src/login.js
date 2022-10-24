@@ -2,24 +2,24 @@ import { BACKEND_PORT } from './config.js';
 import { sendRequest } from './requests.js';
 import { loadError } from './error.js';
 import { loadChannels } from "./channels.js";
+import { resizeChatBox } from './channel.js';
 
-// email (text)
-// password (password)
-// submit button
-
-//  when submit button is pressed, the form data should be sent to POST /auth/login to verify the credentials
-
-
+/*
+    Set the screen to logged in screen
+*/
 export const setLogin = (data) => {
     localStorage.setItem('token', data['token']);
     localStorage.setItem('userId', data['userId']);
     document.getElementById('logged-out').classList.add('hide');
     document.getElementById('logged-in').classList.remove('hide');
+    resizeChatBox();
     loadChannels();
 }
 
 
-// when user is not logged in, present a login form
+/*
+    Request to log in user
+*/
 
 const login = () => {
     // Redirect to register page

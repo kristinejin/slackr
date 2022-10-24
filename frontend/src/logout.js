@@ -2,6 +2,10 @@ import { sendRequest } from "./requests.js";
 import { loadError } from "./error.js";
 import { removeAllChild } from "./helpers.js";
 
+
+/*
+    Set the logged out screen
+*/
 export function setLogout() {
     localStorage.clear();
     // remove all channel details
@@ -12,6 +16,9 @@ export function setLogout() {
 }
 
 
+/*
+    Request to log out user from current session
+*/
 const logoutBtn = document.getElementById('logout-btn');
 
 logoutBtn.addEventListener('click', () => {

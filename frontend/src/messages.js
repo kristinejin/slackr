@@ -2,12 +2,13 @@ import { loadError } from "./error.js";
 import { sendRequest, sendRequestRaw } from "./requests.js";
 import { cloneDiv, parseDate, fileToDataUrl, removeAllChild } from "./helpers.js";
 
-
-// 23/10: edit image edit two the same time ?
-
 // ----------------------------------
-// Fetch all
+// Fetch all messages from a channel
 // ----------------------------------
+
+/*
+    Get one set of messages (up to 25 messages per set)
+*/
 const getOnePage = (channel, start) => {
     return fetch(
         "http://localhost:5005" + '/message/' + channel + '?start=' + start, 
@@ -24,7 +25,10 @@ const getOnePage = (channel, start) => {
     });
 }
 
-
+/*
+    Fetch all message in the channel 
+    returns an array of messages
+*/
 const fetchAllMsg = (channel) => {
 
     const messages = [];
@@ -118,6 +122,9 @@ const removeMsg = (msgEle) => {
 // --------------Edit----------------
 // ----------------------------------
 
+/*
+    Update message information on the dom
+*/
 const editMsgDOM = (msgEle, channelId) => {
     // update message in the dom
     // add edited indication
@@ -135,7 +142,9 @@ const editMsgDOM = (msgEle, channelId) => {
         })
 }
 
-
+/*
+    Edit message request
+*/
 const editMsg = (msgEle) => {
     const editModal = new bootstrap.Modal(document.getElementById('edit-msg-modal'));
     const msgBodyHtml = msgEle.children[1].children[1];
@@ -186,7 +195,10 @@ const editMsg = (msgEle) => {
      
 }
 
-const updateImg = (msgEle, channel, editModal) => {
+/*
+    update edited image on the dom
+*/
+const updateImg = (msgEle, channel) => {
     const input = document.getElementById('edit-img-input');
     const file = input.files[0];
     const msgId = msgEle.id.replace('pinned-', '');
@@ -216,7 +228,9 @@ const updateImg = (msgEle, channel, editModal) => {
         
 }
 
-
+/*
+    Edit image request
+*/
 const editImg = (msgEle, channel) => {
     const editModalEle = document.getElementById('edit-img-modal');
     const editModal = new bootstrap.Modal(editModalEle);
@@ -245,34 +259,46 @@ const editImg = (msgEle, channel) => {
 // -----------Action Icon------------
 // ----------------------------------
 
-const createMsgActionIcon = (msgActionParent, type, identifier) => {
+/*
+    Create an icon and append to an element
+*/
+const createMsgActionIcon = (element, type, identifier) => {
     const action = document.createElement('i');
     action.classList.add('bi', type, 'action-icon', identifier);
-    msgActionParent.appendChild(action);
+    element.appendChild(action);
     return action;
 }
 
-const getActionComponent = (actionList, target) => {
-    let targetAction;
-    actionList.forEach(action => {
-        if (action.classList.contains(target)) {
-            targetAction = action;
+/*
+    Get a child from an element that contains a targted class name
+*/
+const getActionComponent = (element, target) => {
+    let result;
+    element.forEach(child => {
+        if (child.classList.contains(target)) {
+            result = child;
         }
     })
-    return targetAction;
+    return result;
 }
 
 // ----------------------------------
 // -----------React Icons------------
 // ----------------------------------
 
-const cloneAndAppendReaction = (msgActionParent, reactId) => {
+/*
+    Create an reaction element and append to an element
+*/
+const cloneAndAppendReaction = (element, reactId) => {
     const react = cloneDiv(reactId);
     react.classList.add('action-icon', reactId, 'hide');
     react.setAttribute('reacted', false);
-    return msgActionParent.appendChild(react);
+    return element.appendChild(react);
 }
 
+/*
+    Makes request to react to a message 
+*/
 const reactRequest = (channel, msgId, reactName, type) => {
     // send request
     const cleanId = msgId.replace('pinned-', '');
@@ -286,6 +312,10 @@ const reactRequest = (channel, msgId, reactName, type) => {
     });          
 }
 
+
+/*
+    Returns the new reaction count
+*/  
 const updateReactNum = (reactEle, isIncrement) => {
     //  -> a number after that react to indicate amount of that react have been reacted
     const count = reactEle.children[0];
@@ -297,6 +327,10 @@ const updateReactNum = (reactEle, isIncrement) => {
     }
 }
 
+/*
+    Load an reaction details (number of reacts to that reaction and 
+    whether if the authorised user is reacted) to the document
+*/
 const loadReactToDom = (reactEle, isUser, count, unchangeBg, msgId, reactId) => {
     // load react to the dom
     // 1. decide what form we will be taking 
@@ -337,21 +371,11 @@ const loadReactToDom = (reactEle, isUser, count, unchangeBg, msgId, reactId) => 
 
 };
 
-const matchReacts = (reactsData, reactId, reactEle) => {
-    let count = 0;
-    let isUser = false;
-    reactsData.forEach(r => {
-        if (r.react === reactId) {
-            count++;
-            if (r.user.toString() === localStorage.getItem('userId')) {
-                reactEle.setAttribute('reacted', true);
-                isUser = true;
-            }
-        }
-    });
-    return {count: count, isUser: isUser};
-}
 
+
+/*
+    Request for reacting to an message
+*/
 const handleReact = (reactEle, channel, msgEle, reactId) => {
     reactRequest(channel, msgEle.id, reactId, 'react')
         .then(data => {
@@ -365,7 +389,9 @@ const handleReact = (reactEle, channel, msgEle, reactId) => {
         })
         .catch(data => loadError(data));
 }
-
+/*
+    Request for unreacting to an message
+*/
 const handleUnreact = (reactEle, channel, msgEle, reactId) => {
     reactRequest(channel, msgEle.id, reactId, 'unreact')
         .then(data => {
@@ -379,6 +405,10 @@ const handleUnreact = (reactEle, channel, msgEle, reactId) => {
         })
         .catch(data => loadError(data));
 }
+
+/*
+    Event for reacting to an individual message
+*/
 const reactEvent = (react, channel, msgEle, reactId) => {
     // 1. add react listener
     react.addEventListener('click', () => {
@@ -393,6 +423,26 @@ const reactEvent = (react, channel, msgEle, reactId) => {
     })
 }
 
+/*
+    Match the reacts data from the channel detail request to the react element on the dom
+*/
+const matchReacts = (reactsData, reactId, reactEle) => {
+    let count = 0;
+    let isUser = false;
+    reactsData.forEach(r => {
+        if (r.react === reactId) {
+            count++;
+            if (r.user.toString() === localStorage.getItem('userId')) {
+                reactEle.setAttribute('reacted', true);
+                isUser = true;
+            }
+        }
+    });
+    return {count: count, isUser: isUser};
+}
+/*
+    Sets all the required information for a single reaction 
+*/
 const singleReactMain = (reactEles, reactIds, index, reactsData, channel, msgEle) => {
     // reaction 
     const react = reactEles[index];
@@ -402,6 +452,10 @@ const singleReactMain = (reactEles, reactIds, index, reactsData, channel, msgEle
     reactEvent(react, channel, msgEle, reactId);
 }
 
+
+/*
+    Set up all the reactions of a message
+*/
 const msgReact = (actionList, reactIds, reactEles, msgEle, channel, reactsData) => {
     
     // react button event to open reaction menu
@@ -433,11 +487,13 @@ const msgReact = (actionList, reactIds, reactEles, msgEle, channel, reactsData) 
 // ----------------------------------
 
 const pinBoard = new bootstrap.Modal(document.getElementById('pinned-board'));
-// display a message send by authorised user
+
+/*
+    display a message sent by the authorised user in a channel chat
+*/
 const setSenderMsg = (senderEle, msgActionParent, msgEle, msg, channel) => {
     senderEle.classList.add('senderName');
 
-    // TODO: make this a function?
     const remove = createMsgActionIcon(msgActionParent, 'bi-trash', 'remove');
     const edit = createMsgActionIcon(msgActionParent, 'bi-pencil-square', 'edit');
     
@@ -459,17 +515,13 @@ const setSenderMsg = (senderEle, msgActionParent, msgEle, msg, channel) => {
 }
 
 
-const hideMsgAction = (msgEle) => {
-    const msgActionParent = msgEle.children[1].children[0].children[3];
-    msgActionParent.classList.add('hide');
-    
-};
+// ----------------------------------
+// -----------Pin Messages-----------
+// ----------------------------------
 
-const showMsgAction = (msgEle) => {
-    const msgActionParent = msgEle.children[1].children[0].children[3];
-    msgActionParent.classList.remove('hide');
-};
-
+/*
+    Set the vision of a pinned message on the dom
+*/
 const setPinned = (pin, msgEle) => {
     
     msgEle.setAttribute('pinned', 'true');
@@ -489,6 +541,9 @@ const setPinned = (pin, msgEle) => {
     
 }
 
+/*
+    Set the vision of a unpinned message on the dom
+*/
 const setUnpinned = (pin, msgEle) => {
     msgEle.setAttribute('pinned', 'false');
     switchIcon(pin, 'bi-pin-angle-fill', 'bi-pin-angle');
@@ -505,6 +560,9 @@ const setUnpinned = (pin, msgEle) => {
     }
 }
 
+/*
+    Set the vision of a pinned message on the dom
+*/
 const pinMsgMain = (pin, msgEle, channel, msgId) => {
     //  2. pin
     pin.addEventListener('click', () => {
@@ -537,7 +595,17 @@ const pinMsgMain = (pin, msgEle, channel, msgId) => {
     })
 }
 
+
+// ----------------------------------
+// ----------Member Profile----------
+// ----------------------------------
+
+// Member Profile Modal
 const publicUserProfile = new bootstrap.Modal('#public-user-profile');
+
+/*
+    Display a user profile for members in a channel
+*/
 const displaySenderProfile = (senderUid, msgSenderHtml) => {
     msgSenderHtml.addEventListener('click', () => {
         // senderUid
@@ -563,6 +631,11 @@ const displaySenderProfile = (senderUid, msgSenderHtml) => {
     });
 }
 
+
+// ----------------------------------
+// ----------Channel Images----------
+// ----------------------------------
+
 /* 
     Takes in an element for displaying message and an image,
     add image to the given element
@@ -582,10 +655,12 @@ const displayImageChannel = (msgEle, imageData) => {
     return imageEle;
 }
 
-
+/*
+    Get all images and load them to a modal
+*/
 const allImgModal = new bootstrap.Modal('#all-img-modal');
 const allImgBody = document.getElementById('all-img-body');
-const loadMsgToCarousel = (messages, firstId) => {
+const loadImgToCarousel = (messages, firstId) => {
     messages = messages.reverse();
     messages.forEach(msg => {
         if (msg.image) {
@@ -600,20 +675,46 @@ const loadMsgToCarousel = (messages, firstId) => {
         }
     })
 }
+
+/*
+    Enlarge an image in a modal when image is clicked in chat
+*/
 const displayImageInModal = (imageEle, msgId, channelId) => {
     imageEle.addEventListener('click', () => {
         // load all image to allImgBody 
         fetchAllMsg(channelId)
             .then(data => {
                 removeAllChild(allImgBody);
-                loadMsgToCarousel(data, msgId);
+                loadImgToCarousel(data, msgId);
                 allImgModal.show();
             })
     })
 }
 
+// ----------------------------------
+// -----------Channel Main-----------
+// ----------------------------------
 
-// display a message in the chat
+/*
+    Hides message actions (edit/delete/pin/react)
+*/
+const hideMsgAction = (msgEle) => {
+    const msgActionParent = msgEle.children[1].children[0].children[3];
+    msgActionParent.classList.add('hide');
+};
+
+/*
+    Displays message actions (edit/delete/pin/react)
+*/
+const showMsgAction = (msgEle) => {
+    const msgActionParent = msgEle.children[1].children[0].children[3];
+    msgActionParent.classList.remove('hide');
+};
+
+
+/*
+    display a message in a channel chat
+*/
 const displayMsg = (msg, appendStart, appendTo, idPrefix) => {
     // clone the message template
     const newMsg = cloneDiv('msg-template', `${msg.id}`);
@@ -712,7 +813,9 @@ const displayMsg = (msg, appendStart, appendTo, idPrefix) => {
     newMsg.addEventListener('mouseout', () => hideMsgAction(newMsg));
 }
 
-// reset the message body to be empty
+/*
+    reset the message body to be empty
+*/
 export const resetMsgBody = () => {
     const chatBody =  document.getElementById('chat-box-body');
     removeAllChild(chatBody);
@@ -721,7 +824,9 @@ export const resetMsgBody = () => {
     localStorage.setItem('lastScrollTop', '0');
 }
 
-// process either all messages fetch or just individual messages
+/*
+    Display a set of messages
+*/
 const processMsges = (msgArr) => {
     let msgStart = parseInt(localStorage.getItem('msgStart'));
     if (msgArr.length > 0) {
@@ -731,7 +836,9 @@ const processMsges = (msgArr) => {
     msgArr.forEach(msg => displayMsg(msg, true, document.getElementById('chat-box-body')));
 }
 
-// reset chat body and get all messages from backend
+/*
+    Fetch a new set of messages from the start index
+*/
 export const getMsg = (cid) => {
     // fetch messages
     const loadingIcon = document.getElementById('msg-loading-icon');
@@ -749,12 +856,15 @@ export const getMsg = (cid) => {
 }
 
 
-
+/*
+    Disables the send button when the message input is empty or contains only spaces
+    Enables it the vice versa
+*/
 const msgInput = document.getElementById('msg-input');
 const sendMsgBtn = document.getElementById('send-msg-btn');
 msgInput.addEventListener('keyup', () => {
 
-    if(msgInput.value || msgInput.value.trim().length !== 0) {
+    if(msgInput.value && msgInput.value.trim().length !== 0) {
         sendMsgBtn.classList.remove('disabled');
     } else {
         sendMsgBtn.classList.add('disabled');
@@ -762,9 +872,8 @@ msgInput.addEventListener('keyup', () => {
 })
 
 /*
-    Send Message in Chats
+    Display the newest message in a channel
 */
-
 const displayNewMsg = (cid) => {
     // fetch messages
     sendRequest({
@@ -773,11 +882,14 @@ const displayNewMsg = (cid) => {
         token: localStorage.getItem('token') 
     })
     .then(data => {
-        displayMsg(data.messages[index], false, document.getElementById('chat-box-body'));
+        displayMsg(data.messages[0], false, document.getElementById('chat-box-body'));
     })
     .catch(data => loadError(data));
 }
 
+/*
+    Send Message in Chats
+*/
 sendMsgBtn.addEventListener('click', () => {
     const msgToSend = msgInput.value;
     const currChannel = localStorage.getItem('currChannel');
@@ -789,15 +901,14 @@ sendMsgBtn.addEventListener('click', () => {
         },
         token: localStorage.getItem('token')
     }).then(() => {
-        // successfully send
-        // add message to current chat box
+        msgInput.value = '';
         displayNewMsg(currChannel);
     }).catch(data => loadError(data));
 });
 
 
 /*
-    Infinite Scolling 
+    Infinite Scolling in chats
 */
 const element = document.getElementById('chat-box-parent');
 element.onscroll = (e)=>{
@@ -813,8 +924,6 @@ element.onscroll = (e)=>{
     localStorage.setItem('lastScrollTop', lastScrollTop.toString());
     
     if (adjusted + element.offsetHeight>= scrollContainer.scrollHeight){
-        // loading and fetching
-        // TODO: fetching done, now loading
         getMsg(localStorage.getItem('currChannel'));
     }
 }

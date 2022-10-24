@@ -1,3 +1,6 @@
+/*
+    Helper function to send request to the server
+*/
 export function sendRequest({route, method, body, token}) {
     const options = {
         headers: {

@@ -30,14 +30,19 @@ export function fileToDataUrl(file) {
     return dataUrlPromise;
 }
 
-
+/*
+    Check if user is logged in
+*/
 
 export function isLoggedIn() {
     const token = localStorage.getItem('token');
     return (token) ? token : false;
 }
 
-
+/*
+    Clone a div from a given html id, optional to give a replament id
+    If Replacement id is not given, the new element will not have an id attribute
+*/
 export const cloneDiv = (htmlid, id) => {
     const newDiv = document.getElementById(htmlid).cloneNode(true);
     if (!id) {
@@ -55,11 +60,13 @@ export const removeAllChild = (ele) => {
     }
 }
 
-// parse ios date string to a user friendly format 
+/*
+    Parse ios date string to a user friendly format 
+*/
 export const parseDate = (iso) => {
     const date = new Date(iso);
     const now = Date.now();
-    const elapsed = now - date; // elapsed time in milliseconds
+    const elapsed = now - date;
     const elapsedInMins = elapsed/60000;
     const elapsedInHour = elapsed/60000;
     if (elapsedInMins < 60) {

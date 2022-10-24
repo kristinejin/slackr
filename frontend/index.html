@@ -5,44 +5,33 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Slackr</title>
+  <!-- favicon -->
+  <link rel="icon" type="image/x-icon" href="images/favicon-32x32.png">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- You can add your styles and scripts here -->
-  <!-- CSS only -->
+
+  <!-- jquery for boostrap -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- boostrap css -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" media="screen" href="styles/provided.css" />
   <script type="module" src="src/helpers.js"></script>
-  <!-- Reference: icon from bootstrap -->
+  <!-- Reference: all icons are from bootstrap icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <!-- customise css -->
+  <link rel="stylesheet" type="text/css" media="screen" href="styles/provided.css" />
 </head>
 
-
-<style>
-  /* #login {
-    display:flex; 
-    align-self:center;
-    justify-content: center;
-  } */
-
-</style>
-
 <body>
-
-  
-
-
   <!-- This is an example app structure, you can modify this as much as you choose -->
   <header class="banner" id="header">
     <h1>Slackr</h1>
   </header>
 
-
-  
-
-
   <main role="main" id="main">
+    <!-- Logged in section -->
     <div id="logged-out">
     
+      <!-- Login page -->
       <div id="login">
         <form>
           <div class="mb-3">
@@ -59,12 +48,12 @@
         Don't have an account? Register <span class="clickable" id="redir-reg">here</span>!
       </div>
     
+      <!-- Register page -->
       <div id="reg" class="hide">
         <form>
           <div class="mb-3">
             <label for="reg-email" class="form-label">Email address</label>
             <input type="email" class="form-control" id="reg-email">
-            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
           </div>
     
           <div class="mb-3">
@@ -83,15 +72,12 @@
           </div>
           <button type="button" class="btn btn-primary" id="reg-btn">Submit</button>
         </form>
+        Already have an account? Login <span class="clickable" id="redir-login">here</span>!
       </div>
-      
     </div>
 
+    <!-- Logged out section -->
     <div id="logged-in">
-
-      <!-- hide channel list -->
-      
-      
       <!-- channel list -->
       <div id="channel-list-offcanvas" class="offcanvas offcanvas-start show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" aria-labelledby="offcanvasScrollingLabel">
         <div class="offcanvas-header">
@@ -130,11 +116,14 @@
             <i class="bi bi-list"></i>
           </div>
           <div class="btn btn-outline-dark" id="user-profile-btn">
-            <span>Profile</span>
+            <i class="bi bi-person-circle"></i>
+            <span class="small">Profile</span>
           </div>
           <div class="btn btn-outline-dark" id="logout-btn">
-            <span>Logout</span> 
+            <span class="small">Logout</span> 
+            <i class="bi bi-box-arrow-right"></i>
           </div>
+          
         </div>
 
 
@@ -150,13 +139,16 @@
                   <!-- Channel pinned message -->
                   <div class="d-flex btn btn-outline-dark small gap-1" id="pinned-msg-btn">
                     <i class="bi bi-pin-angle-fill"></i>
-                    <span></span>
+                  </div>
+
+                  <!-- Show members -->
+                  <div class="d-flex btn btn-outline-dark gap-1" id="channel-members-btn">
+                    <i class="bi bi-people"></i>
                   </div>
 
                   <!-- Channel invite -->
                   <div class="d-flex btn btn-outline-dark gap-1" id="channel-invite-btn">
                     <i class="bi bi-person-plus"></i>
-                    <span></span>
                   </div>
                   
                   <!-- Btn for channel details -->
@@ -198,7 +190,9 @@
         </div>
       </section> <!-- for individual channel -->
 
-    </div> 
+    </div>
+
+     <!-- Templates and Modals -->
 
     <!-- Individual message template -->
     <div id="msg-template" class="d-flex pb-2 hide msg-parent" pinned="false">
@@ -325,7 +319,7 @@
               <hr>
               <div>
                 <span>Created by:</span> 
-                <span id="channel-dets-creator" class="clickable"></span>
+                <span id="channel-dets-creator"></span>
               </div>
               <hr>
               <div>
@@ -418,7 +412,6 @@
           <div class="modal-body" id="public-user-profile-body">
               <div class="gap-1">
                 <img id="public-user-profile-pic" src="images/default4.png" alt="avatar" class="mb-1 rounded-circle chat-profile-pic">
-                <!-- <span>Username: </span> -->
                 <span id="public-user-profile-name"></span>
               </div>
 
@@ -477,7 +470,7 @@
           </div>
 
           <div class="modal-footer">
-            <button id="user-profile-update-btn" type="button" class="btn btn-primary" >Save</button>
+            <button id="user-profile-update-btn" type="button" class="btn btn-primary">Save</button>
           </div>
         </div>
       </div>
@@ -485,10 +478,10 @@
 
     <!-- invite user modal -->
     <div class="modal fade" id="invite-modal" tabindex="-1" aria-labelledby="invite-modal-label" aria-hidden="true">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="invite-modal-label">Modal title</h1>
+            <h1 class="modal-title fs-5" id="invite-modal-label">Invite users</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div id="invite-modal-body" class="modal-body">
@@ -509,7 +502,7 @@
       </label>
     </div>
 
-    <!-- Modal -->
+    <!-- Popup screen to show all the images in a channel -->
     <div class="modal fade" id="all-img-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -536,12 +529,33 @@
     </div>
 
     <img src="images/default.jpg" class="d-block w-100 hide all-img" alt="chat image" id="carousel-img-template">
+
+
+    <!-- Modal to show members in a channel -->
+    <div class="modal fade" id="members-modal" tabindex="-1" aria-labelledby="invite-modal-label" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="members-modal-label">Members</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div id="members-modal-body" class="modal-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- invite user info template -->
+    <div class="hide" id="member-template">
+      <img class="member-image rounded-circle chat-profile-pic" src="images/default4.png" alt="user profile image">
+      <span class="member-name ps-2"></span>
+      <span class="member-email"></span>
+      <span class="member-bio"></span>
+      <hr>
+    </div>
+
     
 
   </main>
-  <!-- <footer id="app-footer" class="fixed-bottom">
-    <p>&copy; Slackr</p>
-  </footer> -->
   <!-- <script src="jquery-3.6.1.min.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
