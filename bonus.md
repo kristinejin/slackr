@@ -11,3 +11,4 @@
 6. Designed Logo and Favicon!
 7. Designed user interface!
 8. Smooth user experience!
+9. (Halloween edition reaction)

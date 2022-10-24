@@ -43,7 +43,7 @@
             <label for="login-password" class="form-label">Password</label>
             <input type="password" class="form-control" id="login-password">
           </div>
-          <button type="button" class="btn btn-primary" id="login-btn">Login</button>
+          <button type="button" class="btn btn-outline-dark" id="login-btn">Login</button>
         </form>
         Don't have an account? Register <span class="clickable" id="redir-reg">here</span>!
       </div>
@@ -70,7 +70,7 @@
             <label for="reg-pass2" class="form-label">Confirm Password</label>
             <input type="password" class="form-control" id="reg-pass2">
           </div>
-          <button type="button" class="btn btn-primary" id="reg-btn">Submit</button>
+          <button type="button" class="btn btn-outline-dark" id="reg-btn">Submit</button>
         </form>
         Already have an account? Login <span class="clickable" id="redir-login">here</span>!
       </div>
@@ -87,7 +87,7 @@
         <div class="offcanvas-body">
           <section id="view-all-channels">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <button class="btn btn-primary me-md-2 create-channel-btn" type="button" id="create-channel-btn">+ New Channel</button>
+              <button class="btn btn-outline-dark me-md-2 create-channel-btn" type="button" id="create-channel-btn">+ New Channel</button>
             </div>
             
             <div id="channel-parent" >
@@ -248,7 +248,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Nope</button>
-            <button type="button" class="btn btn-primary" id="join-channel-btn">Join</button>
+            <button type="button" class="btn btn-outline-dark" id="join-channel-btn">Join</button>
           </div>
         </div>
       </div>
@@ -292,7 +292,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="create-channel-submit">Create</button>
+            <button type="button" class="btn btn-outline-dark" id="create-channel-submit">Create</button>
           </div>
         </div>
       </div>
@@ -314,7 +314,7 @@
                   <span>Channel Name:</span>
                   <input id="channel-dets-name" type="text"></input>
                 </div>
-                <button type="button" class="btn btn-primary btn-sm channel-dets-edit-btn" for="channel-dets-name">Edit</button>
+                <button type="button" class="btn btn-outline-dark btn-sm channel-dets-edit-btn" for="channel-dets-name">Edit</button>
               </div>
               <hr>
               <div>
@@ -332,7 +332,7 @@
                   <span class="align-top">Description: </span>
                   <textarea id="channel-dets-description" contenteditable="true"></textarea>
                 </div>
-                <button type="button" class="btn btn-primary btn-sm channel-dets-edit-btn" for="channel-dets-description">Edit</button>
+                <button type="button" class="btn btn-outline-dark btn-sm channel-dets-edit-btn" for="channel-dets-description">Edit</button>
               </div>
             </div>
             <hr>
@@ -362,7 +362,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="edit-msg-modal-btn">Save</button>
+            <button type="button" class="btn btn-outline-dark" id="edit-msg-modal-btn">Save</button>
           </div>
         </div>
       </div>
@@ -381,7 +381,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="edit-img-btn">Save</button>
+            <button type="button" class="btn btn-outline-dark" id="edit-img-btn">Save</button>
           </div>
         </div>
       </div>
@@ -470,7 +470,7 @@
           </div>
 
           <div class="modal-footer">
-            <button id="user-profile-update-btn" type="button" class="btn btn-primary">Save</button>
+            <button id="user-profile-update-btn" type="button" class="btn btn-outline-dark">Save</button>
           </div>
         </div>
       </div>
@@ -488,7 +488,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button id="invite-submit-btn" type="button" class="btn btn-primary">Invite</button>
+            <button id="invite-submit-btn" type="button" class="btn btn-outline-dark">Invite</button>
           </div>
         </div>
       </div>
@@ -568,6 +568,7 @@
   <script type="module" src="src/channel.js"></script>
   <script type="module" src="src/messages.js"></script>
   <script type="module" src="src/users.js"></script>
+  <script type="module" src="src/display.js"></script>
 </body>
 
 </html>

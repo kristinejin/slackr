@@ -4,9 +4,10 @@ html, body {
     margin: 0;
     /* padding: 2vh 4vw 2vh 4vw; */
     padding: 0;
-    background-color: #fafafa;
+    background-color: #f8f4ed;
     height: 100%;
     font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: rgb(52, 50, 45);
 }
 
 /*     Main     */
