@@ -1,22 +1,14 @@
 import { BACKEND_PORT } from './config.js';
 // A helper you may want to use when uploading new images to the server.
-import { fileToDataUrl, isLoggedIn, setLogout } from './helpers.js';
-import { login }    from './login.js'
-// import * as bootstrap from 'bootstrap';
-import 'bootstrap'; 
-// const bootstrap = require('bootstrap');
-// const myModalAlternative = new bootstrap.Modal('#myModal', options);
+import { fileToDataUrl, isLoggedIn } from './helpers.js';
 
-const popup = document.getElementById('error-popup');
-const myModal = new bootstrap.Modal(document.getElementById('myModal'));
-if (!isLoggedIn()) {
-    document.getElementById('login').style.display = 'block';
-    document.getElementById('reg').style.display = 'none';
-    document.getElementById('logged-in').style.display = 'none';
+/*
+    Present logged in / logged out screen when get to the site
+*/
+if (isLoggedIn()) {
+    document.getElementById('logged-out').classList.add('hide');
+    document.getElementById('logged-in').classList.remove('hide');
 } else {
-    document.getElementById('logged-in').style.display = 'block';
-    document.getElementById('logged-out').style.display = 'none';
+    document.getElementById('login').classList.remove('hide');
+    document.getElementById('logged-in').classList.add('hide');
 }
-
-const myModal = getElementById('modal');
-const closeModal = getElementById('close-modal');

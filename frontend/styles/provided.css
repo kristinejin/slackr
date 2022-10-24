@@ -2,12 +2,39 @@
 /* base styles, feel free to edit */
 html, body {
     margin: 0;
+    /* padding: 2vh 4vw 2vh 4vw; */
     padding: 0;
     background-color: #fafafa;
     height: 100%;
     font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+/*     Main     */
+
+#header {
+    padding-top: 4%;
+    display: flex;
+    justify-content: space-around;
+    color: rgba(52, 50, 45, 0.85);
+    font-family: Monospace;
+}
+
+
+#logged-out {
+    padding: 5%;
+}
+
+#logged-in {
+    display: flex;
+}
+
+#channel-list-off-canvas {
+    max-width:250px;
+}
+
+#individual-channel {
+    width: 100%;
+}
 
 .clickable {
     color:#215af2;
@@ -20,5 +47,83 @@ html, body {
 }
 
 .hide {
-    display: none;
+    display: none !important;
+}
+
+.btn-primary {
+    --bs-btn-font-weight: 600;
+    --bs-btn-color: var(--bs-white);
+    --bs-btn-bg: rgb(204, 176, 128);
+    --bs-btn-border-color: rgb(204, 176, 128);
+    --bs-btn-border-radius: .5rem;
+    --bs-btn-hover-color: var(--bs-white);
+    --bs-btn-hover-bg: rgb(167, 143, 105);
+    --bs-btn-hover-border-color: rgb(167, 143, 105);
+    --bs-btn-focus-shadow-rgb: rgb(167, 143, 105);
+    --bs-btn-active-color: var(--bs-white);
+    --bs-btn-active-bg: rgb(143, 123, 91);
+    --bs-btn-active-border-color: rgb(143, 123, 91);
+    --bs-btn-disabled-bg: rgb(204, 176, 128);
+    --bs-btn-disabled-border-color: rgb(204, 176, 128);
+}
+
+/*     Channel     */
+
+.channel-elements {
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.channel-elements:hover {
+    cursor: pointer;
+}
+
+.channel-dets-child {
+    display: flex;
+    justify-content: space-between;
+}
+
+.channel-dets-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    row-gap: 20%;
+}
+
+.align-to-end {
+    display: flex;
+    align-self: flex-end;
+}
+
+/*     Chats and messages     */
+
+.chat-profile-pic {
+    height: 30px; 
+    width:30px;
+}
+
+.chat-img {
+    max-width: 200px;
+    max-height: 200px;
+}
+
+.senderName {
+    color:rgba(113, 66, 8, 0.669);
+}
+
+.msg-parent:hover {
+    background-color: gainsboro;
+    cursor: pointer;
+}
+
+.action-icon:hover {
+    transform: scale(1.2);
+}
+
+
+/*     User profile     */
+
+#user-profile-toggle-pass:hover {
+    cursor: pointer;
 }

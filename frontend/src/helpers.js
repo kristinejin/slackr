@@ -30,22 +30,54 @@ export function fileToDataUrl(file) {
     return dataUrlPromise;
 }
 
-
+/*
+    Check if user is logged in
+*/
 
 export function isLoggedIn() {
-    let token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     return (token) ? token : false;
 }
 
-export function setLogout() {
-    localStorage.removeItem('token');
-    document.getElementById('logged-in').style.display = 'none';
-    document.getElementById('logged-out').style.display = 'block';
+/*
+    Clone a div from a given html id, optional to give a replament id
+    If Replacement id is not given, the new element will not have an id attribute
+*/
+export const cloneDiv = (htmlid, id) => {
+    const newDiv = document.getElementById(htmlid).cloneNode(true);
+    if (!id) {
+        newDiv.removeAttribute('id');
+    } else {
+        newDiv.setAttribute('id', id);
+    }
+    newDiv.classList.remove('hide');
+    return newDiv;
 }
 
-export const setLogin = (data) => {
-    localStorage.setItem('token', data['token']);
-    localStorage.setItem('userId', data['userId']);
-    document.getElementById('logged-out').style.display = 'none';
-    document.getElementById('logged-in').style.display = 'block';
+export const removeAllChild = (ele) => {
+    while(ele.firstChild) {
+        ele.removeChild(ele.lastChild);
+    }
+}
+
+/*
+    Parse ios date string to a user friendly format 
+*/
+export const parseDate = (iso) => {
+    const date = new Date(iso);
+    const now = Date.now();
+    const elapsed = now - date;
+    const elapsedInMins = elapsed/60000;
+    const elapsedInHour = elapsed/60000;
+    if (elapsedInMins < 60) {
+        return `${elapsedInMins | 0} mins ago`;
+    }
+    else if (elapsedInHour < 24) {
+        if (elapsedInHour | 0 === 1) {
+            return `${elapsedInHour | 0} hour ago`;
+        }
+        return `${elapsedInHour | 0} hours ago`;
+    }
+    const dates = [date.getDate(), date.getMonth(), date.getFullYear()];
+    return `${dates[0]}/${dates[1]}/${dates[2]}`
 }

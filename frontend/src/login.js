@@ -1,43 +1,54 @@
 import { BACKEND_PORT } from './config.js';
-import { register } from './reg.js'
-import { setLogin } from './helpers.js';
 import { sendRequest } from './requests.js';
+import { loadError } from './error.js';
+import { loadChannels } from "./channels.js";
+import { resizeChatBox } from './channel.js';
 
-// email (text)
-// password (password)
-// submit button
+/*
+    Set the screen to logged in screen
+*/
+export const setLogin = (data) => {
+    localStorage.setItem('token', data['token']);
+    localStorage.setItem('userId', data['userId']);
+    document.getElementById('logged-out').classList.add('hide');
+    document.getElementById('logged-in').classList.remove('hide');
+    resizeChatBox();
+    loadChannels();
+}
 
-//  when submit button is pressed, the form data should be sent to POST /auth/login to verify the credentials
 
+/*
+    Request to log in user
+*/
 
-// when user is not logged in, present a login form
-
-login();
-
-
-export function login() {
+const login = () => {
     // Redirect to register page
     const regLink = document.getElementById('redir-reg')
     regLink.addEventListener("click", () => {
-        console.log("hello!!");
-        document.getElementById('login').style.display='none';
-        document.getElementById('reg').style.display='block';
+        document.getElementById('login').classList.add('hide');
+        document.getElementById('reg').classList.remove('hide');
     })
 
-    // get all data from html doc
-
+    // get all data from the dom
     const email = document.getElementById('login-email');
     const password = document.getElementById('login-password');
     const btn = document.getElementById('login-btn');
 
     btn.addEventListener("click", (event) => {
         // post request to log in 
-        sendRequest('/auth/login', 'POST', {
+        sendRequest({
+            route: '/auth/login', 
+            method: 'POST', 
+            body: {
             "email": email.value, 
             "password": password.value
-        }).then((data) => {
+        }}).then((data) => {
             setLogin(data);
+        }).catch(data => {
+            loadError(data);
         });
     });
 }
 
+
+login();
