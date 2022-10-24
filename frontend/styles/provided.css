@@ -4,9 +4,10 @@ html, body {
     margin: 0;
     /* padding: 2vh 4vw 2vh 4vw; */
     padding: 0;
-    background-color: #fafafa;
+    background-color: #fdf8ef;
     height: 100%;
     font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color:rgba(55, 53, 47, 0.957);
 }
 
 /*     Main     */
@@ -15,7 +16,7 @@ html, body {
     padding-top: 4%;
     display: flex;
     justify-content: space-around;
-    color: rgba(52, 50, 45, 0.85);
+    color: rgba(52, 50, 45, 0.962);
     font-family: Monospace;
 }
 
