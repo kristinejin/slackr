@@ -1,12 +1,11 @@
 import { BACKEND_PORT } from './config.js';
 // A helper you may want to use when uploading new images to the server.
-import { fileToDataUrl, isLoggedIn, setLogout } from './helpers.js';
+import { fileToDataUrl, isLoggedIn } from './helpers.js';
 
-if (!isLoggedIn()) {
-    document.getElementById('login').style.display = 'block';
-    document.getElementById('reg').style.display = 'none';
-    document.getElementById('logged-in').style.display = 'none';
+if (isLoggedIn()) {
+    document.getElementById('logged-out').classList.add('hide');
+    document.getElementById('logged-in').classList.remove('hide');
 } else {
-    document.getElementById('logged-out').style.display = 'none';
-    document.getElementById('logged-in').style.display = 'block';
+    document.getElementById('login').classList.remove('hide');
+    document.getElementById('logged-in').classList.add('hide');
 }

@@ -1,52 +1,43 @@
 import { loadError } from './error.js'
 import { sendRequest } from './requests.js'
 import { createEventForChannel, viewChannel } from './channel.js';
-import { cloneDiv } from './helpers.js';
+import { cloneDiv, removeAllChild } from './helpers.js';
 
 
-export const checkToken = () => {
-    const userToken = localStorage.getItem('token');
-    if (userToken) {
-        return userToken;
+const parseChannels = (data) => {
+    for (let channel of data.channels) {
+        renderChannels(channel.name, channel.id, channel.private, channel.members);
     }
-    else {
-        return false;
-    }
-}
+    createEventForChannel();
+} 
 
 export const loadChannels = () => {
+    if (!localStorage.getItem('token')) {
+        return;
+    }
     const allChannels = document.getElementById('channel-parent');
     const newList = cloneDiv('channel-parent-template', 'channel-list');
-    while (allChannels.firstChild) {
-        allChannels.removeChild(allChannels.lastChild);
-    }
+
+    removeAllChild(allChannels);
 
     allChannels.append(newList)
    
-
-    const userToken = checkToken();
-    if (!userToken) {
-        return;
-    }
+    const userToken = localStorage.getItem('token');
     sendRequest({
         route: '/channel', 
         method: 'GET', 
         token: userToken
     })
-        .then(data => parseChannels(data))
+        .then(data => {
+            parseChannels(data);
+            const currChannel = localStorage.getItem('currChannel');
+            if (currChannel) {
+                viewChannel(currChannel);
+            }
+        })
         .catch(data => loadError(data));
 
-    const parseChannels = (data) => {
-        for (let channel of data.channels) {
-            renderChannels(channel.name, channel.id, channel.private, channel.members);
-        }
-        createEventForChannel();
-        const currChannel = localStorage.getItem('currChannel');
-        if (currChannel) {
-            // document.getElementById(channel);
-            viewChannel(currChannel);
-        }
-    } 
+    
 }
 
 const checkIsMember = (userId, members) => {
@@ -137,9 +128,6 @@ const createChannels = () => {
         createChannelPopup.hide();
     });
 }
-
-
-
 loadChannels();
 createChannels();
 

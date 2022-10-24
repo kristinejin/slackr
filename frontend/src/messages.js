@@ -1,6 +1,6 @@
 import { loadError } from "./error.js";
 import { sendRequest, sendRequestRaw } from "./requests.js";
-import { cloneDiv, parseDate, fileToDataUrl } from "./helpers.js";
+import { cloneDiv, parseDate, fileToDataUrl, removeAllChild } from "./helpers.js";
 
 
 // 23/10: edit image edit two the same time ?
@@ -91,11 +91,7 @@ const switchIcon = (ele, from, to) => {
     ele.classList.add(to);
 }
 
-const removeAllChild = (ele) => {
-    while(ele.firstChild) {
-        ele.removeChild(ele.lastChild);
-    }
-}
+
 
 // ----------------------------------
 // Remove message
@@ -236,8 +232,10 @@ const editImg = (msgEle, channel) => {
 
     const editBtn = document.getElementById('edit-img-btn');
     
-    editBtn.addEventListener('click', () => updateImg(msgEle, channel));
-    editModal.hide();
+    editBtn.addEventListener('click', () => {
+        updateImg(msgEle, channel)
+        editModal.hide();
+    });
     editModalEle.addEventListener('hidden.bs.modal', () => {
         editBtn.removeEventListener('click', updateImg(msgEle, channel));
     })
@@ -736,12 +734,17 @@ const processMsges = (msgArr) => {
 // reset chat body and get all messages from backend
 export const getMsg = (cid) => {
     // fetch messages
+    const loadingIcon = document.getElementById('msg-loading-icon');
+    loadingIcon.classList.remove('hide');
     sendRequest({
         route: '/message/' + cid + '?start=' + localStorage.getItem('msgStart'),
         method: 'GET',
         token: localStorage.getItem('token') 
     })
-    .then(data => processMsges(data.messages))
+    .then(data => {
+        loadingIcon.classList.add('hide');
+        processMsges(data.messages);
+    })
     .catch(data => loadError(data));
 }
 
@@ -758,10 +761,14 @@ msgInput.addEventListener('keyup', () => {
     }
 })
 
-const getSingleMsg = (cid, index) => {
+/*
+    Send Message in Chats
+*/
+
+const displayNewMsg = (cid) => {
     // fetch messages
     sendRequest({
-        route: '/message/' + cid + '?start=' + 0,
+        route: '/message/' + cid + '?start=0',
         method: 'GET',
         token: localStorage.getItem('token') 
     })
@@ -771,7 +778,6 @@ const getSingleMsg = (cid, index) => {
     .catch(data => loadError(data));
 }
 
-// send message event
 sendMsgBtn.addEventListener('click', () => {
     const msgToSend = msgInput.value;
     const currChannel = localStorage.getItem('currChannel');
@@ -785,12 +791,15 @@ sendMsgBtn.addEventListener('click', () => {
     }).then(() => {
         // successfully send
         // add message to current chat box
-        getSingleMsg(currChannel, 0);
+        displayNewMsg(currChannel);
     }).catch(data => loadError(data));
 });
 
-const element = document.getElementById('chat-box-parent');
 
+/*
+    Infinite Scolling 
+*/
+const element = document.getElementById('chat-box-parent');
 element.onscroll = (e)=>{
     let lastScrollTop = parseInt(localStorage.getItem('lastScrollTop'));
     const scrollContainer = document.getElementById('chat-box-body');
@@ -810,9 +819,11 @@ element.onscroll = (e)=>{
     }
 }
 
-// show all pinned messages
+
+/*
+    Show all Pinned Messages on a modal
+*/
 const showPinBtn = document.getElementById('pinned-msg-btn');
-// get modal TODO
 showPinBtn.addEventListener('click', () => {
     const channel = localStorage.getItem('currChannel');
     const pinBoardBody = document.getElementById('pinned-msg-body');
@@ -831,16 +842,18 @@ showPinBtn.addEventListener('click', () => {
             pinBoard.show();
         })
         .catch(data => loadError(data));
-    // fuck, same functionality... meaning using display messages function? does it  work? 
 })
 
 
+
+/*
+    Upload Image in Chats
+*/
 const imageBtn = document.getElementById('send-image-btn');
 const imageUpload = document.getElementById('chat-image-upload');
 imageBtn.addEventListener('click', () => {
     imageUpload.click();
 })
-
 
 imageUpload.addEventListener('change', () => {
     const newImage = imageUpload.files[0];
@@ -858,7 +871,7 @@ imageUpload.addEventListener('change', () => {
         })
         .then(() => {
             // want to display the new message
-            getSingleMsg(channel, 0);
+            displayNewMsg(channel);
         })
         .catch(data => loadError(data))
 })

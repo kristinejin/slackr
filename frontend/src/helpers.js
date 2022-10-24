@@ -33,22 +33,8 @@ export function fileToDataUrl(file) {
 
 
 export function isLoggedIn() {
-    let token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     return (token) ? token : false;
-}
-
-export function setLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    document.getElementById('logged-in').style.display = 'none';
-    document.getElementById('logged-out').style.display = 'block';
-}
-
-export const setLogin = (data) => {
-    localStorage.setItem('token', data['token']);
-    localStorage.setItem('userId', data['userId']);
-    document.getElementById('logged-out').style.display = 'none';
-    document.getElementById('logged-in').style.display = 'block';
 }
 
 
@@ -63,6 +49,11 @@ export const cloneDiv = (htmlid, id) => {
     return newDiv;
 }
 
+export const removeAllChild = (ele) => {
+    while(ele.firstChild) {
+        ele.removeChild(ele.lastChild);
+    }
+}
 
 // parse ios date string to a user friendly format 
 export const parseDate = (iso) => {

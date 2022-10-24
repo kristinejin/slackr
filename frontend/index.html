@@ -59,7 +59,7 @@
         Don't have an account? Register <span class="clickable" id="redir-reg">here</span>!
       </div>
     
-      <div id="reg">
+      <div id="reg" class="hide">
         <form>
           <div class="mb-3">
             <label for="reg-email" class="form-label">Email address</label>
@@ -122,38 +122,41 @@
       </div>
 
       <!-- channel chats -->
-      <section id="individual-channel" class="d-flex flex-column justify-content-end">
-        <!-- d-grid gap-2 d-md-flex justify-content-md-end -->
-        <div class="d-flex main-btns">
+      <section id="individual-channel">
+        
+        <!-- Main buttons on logged in pages -->
+        <div class="btn-group" role="group">
           <div id="channel-list-toggle" class="btn btn-outline-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#channel-list-offcanvas" aria-controls="channel-list-offcanvas">
             <i class="bi bi-list"></i>
           </div>
-          <div id="logout-btn">
-            <button class="btn btn-outline-dark" type="button">Logout?</button>
+          <div class="btn btn-outline-dark" id="user-profile-btn">
+            <span>Profile</span>
           </div>
-          <div>
-            <button id="user-profile-btn" class="btn btn-outline-dark" type="button">Profile</button>
+          <div class="btn btn-outline-dark" id="logout-btn">
+            <span>Logout</span> 
           </div>
         </div>
+
+
         <div class="card" id="channel-chat">
           <div class="card-header">
           
             <nav class="navbar avbar-expand-lg bg-light">
               <div class="container-fluid">
                 <!-- a brand -->
-                <h5 class="navbar-branch" id="chat-channel-name">Please select a new channel...</h5>
+                <h5 class="navbar-branch" id="chat-channel-name">Select a channel to start chatting...</h5>
                 <!-- icon for channel pinned messages? -->
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <div class="btn-group", role="group">
                   <!-- Channel pinned message -->
                   <div class="d-flex btn btn-outline-dark small gap-1" id="pinned-msg-btn">
                     <i class="bi bi-pin-angle-fill"></i>
-                    <span>Pinned</span>
+                    <span></span>
                   </div>
 
                   <!-- Channel invite -->
                   <div class="d-flex btn btn-outline-dark gap-1" id="channel-invite-btn">
                     <i class="bi bi-person-plus"></i>
-                    <span>Invite</span>
+                    <span></span>
                   </div>
                   
                   <!-- Btn for channel details -->
@@ -165,9 +168,15 @@
               </div>
             </nav>
           </div>
+
+          <div class="d-flex justify-content-center pt-2 hide" id="msg-loading-icon">
+            <div class="spinner-border spinner-border-sm" role="status" >
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
           
           <div class="card-body overflow-scroll d-flex flex-column-reverse" id="chat-box-parent">
-            <div id="chat-box-body" style="width: 100%;">
+            <div id="chat-box-body">
             </div>
           </div>
 
@@ -539,6 +548,7 @@
 
   <script type="module" src="src/main.js"></script>
   <script type="module" src="src/login.js"></script>
+  <script type="module" src="src/logout.js"></script>
   <script type="module" src="src/reg.js"></script>
   <script type="module" src="src/channels.js"></script>
   <script type="module" src="src/channel.js"></script>

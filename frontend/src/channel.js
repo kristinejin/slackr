@@ -78,7 +78,7 @@ const setChannelDets = (channelDets) => {
         method: 'GET',
         token: localStorage.getItem('token')
     }).then(data => {
-        document.getElementById('channel-dets-creator').innerText = data.name + ' (#' + channelDets.creator + ')';
+        document.getElementById('channel-dets-creator').innerText = data.name + ' (#' + channelDets.email + ')';
     }).catch(data => loadError(data));
 
     // Set other channel details
@@ -114,11 +114,12 @@ const showChannelDets = (channelDets, cid) => {
     });
 }
 
-const resizeChatBox = () => {
+export const resizeChatBox = () => {
+    console.log('resizing')
     const sidebarHeight = document.getElementById('channel-list-offcanvas').offsetHeight;
-        const headerHeight = document.getElementById('header').offsetHeight;
-        const btnHeight = document.getElementById('channel-list-toggle').offsetHeight;
-        document.getElementById('channel-chat').style.height = `calc(${sidebarHeight}px - ${headerHeight}px - ${btnHeight}px - 0.50em)`;
+    const headerHeight = document.getElementById('header').offsetHeight;
+    const btnHeight = document.getElementById('channel-list-toggle').offsetHeight;
+    document.getElementById('channel-chat').style.height = `calc(${sidebarHeight}px - ${headerHeight}px - ${btnHeight}px - 0.50em)`;
 }
 
 // Set basic view of individual channel
@@ -140,11 +141,6 @@ const setIndiChannelView = (channelDets, cid) => {
 // Redirect individual channels
 export const viewChannel = (cid) => {
     const channel = document.getElementById(cid);
-    if (channel.getAttribute('is-member') !== 'true') {
-        displayJoin(cid, channel);
-        return;
-    }
-
     // get channel info
     sendRequest({
         route: '/channel/' + cid,
@@ -152,7 +148,7 @@ export const viewChannel = (cid) => {
         token: localStorage.getItem('token') 
     })
     .then(data => setIndiChannelView(data, cid))
-    .catch(data => console.log(data));
+    .catch(() => displayJoin(cid, channel));
 }
 
 

@@ -1,10 +1,13 @@
 import { sendRequest } from "./requests.js";
-import { cloneDiv, fileToDataUrl } from "./helpers.js";
+import { cloneDiv, fileToDataUrl, removeAllChild } from "./helpers.js";
 import { loadError } from "./error.js";
 import { loadChannels } from "./channels.js";
 
 const currUser = localStorage.getItem('token');
 const getAllUsers = new Promise((resolve, reject) => {
+    if (!localStorage.getItem('token')) {
+        return;
+    }
     sendRequest({
         route: '/user',
         method: 'GET',
@@ -23,6 +26,8 @@ const getAllUsers = new Promise((resolve, reject) => {
             }
             resolve({names: names, users:users});
         })
+    }).catch(data => {
+        loadError(data)
     })
 });
 
@@ -39,9 +44,7 @@ const inviteModal = new bootstrap.Modal('#invite-modal');
 const inviteBody = document.getElementById('invite-modal-body');
 
 const resetInviteModal = () => {
-    while (inviteBody.firstChild) {
-        inviteBody.removeChild(inviteBody.lastChild);
-    }
+    removeAllChild(inviteBody);
 }
 const inviteCheckboxId = 'invite-checkbox';
 

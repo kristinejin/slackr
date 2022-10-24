@@ -1,4 +1,4 @@
-import { setLogin } from './helpers.js';
+import { setLogin } from './login.js';
 import { sendRequest } from './requests.js';
 import { loadError } from './error.js';
 

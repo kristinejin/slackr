@@ -38,19 +38,6 @@ html, body {
 }
 
 .btn-primary {
-    /* --bs-btn-color: white;
-    
-    --bs-btn-hover-bg: rgb(186, 151, 91);
-    --bs-btn-active-bg: rgb(86, 65, 28);
-    --bs-btn-disabled-bg: rgba(204, 176, 128, 0.69); */
-
-    /* borders */
-    /* --bs-btn-active-border-color:rgb(204, 176, 128);
-    --bs-btn-border-color: rgb(204, 176, 128);
-    --bs-btn-hover-border-color:rgb(204, 176, 128);
-    --btn-disabled-border-color: rgb(204, 176, 128); */
-
-
     --bs-btn-font-weight: 600;
     --bs-btn-color: var(--bs-white);
     --bs-btn-bg: rgb(204, 176, 128);
@@ -111,9 +98,9 @@ html, body {
     /* color: rgb(241, 223, 176); */
 }
 
-.main-btns:last-of-type {
+/* .main-btns:last-of-type {
     margin-left: auto;
-}
+} */
 
 #user-profile-toggle-pass:hover {
     cursor: pointer;
@@ -127,4 +114,9 @@ html, body {
 .all-img {
     /* max-height: 80vh;
     max-width: 80vw; */
+}
+
+
+#individual-channel {
+    width: 100%;
 }
